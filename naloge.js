@@ -8,26 +8,26 @@ const fr = (a, b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>
 
 const PAPERS = [
   // Matematika 1 — 1. kolokvij
-  { id: "m-k1-20", s: "mat", k: 1, label: "K1", year: "2020/21", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
-  { id: "m-k1-21", s: "mat", k: 1, label: "K1", year: "2021/22", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
-  { id: "m-k1-22", s: "mat", k: 1, label: "K1", year: "2022/23", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
-  { id: "m-k1-23", s: "mat", k: 1, label: "K1", year: "2023/24", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
-  { id: "m-k1-24", s: "mat", k: 1, label: "K1", year: "2024/25", tasks: [["indukcija"], ["kompleksna"], ["absolutna"], ["supinf"]] },
-  { id: "m-k1-25", s: "mat", k: 1, label: "K1", year: "2025/26", tasks: [["indukcija"], ["kompleksna"], ["absolutna"], ["funkcije"]] },
+  { id: "m-k1-20", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2020_21.pdf", k: 1, label: "K1", year: "2020/21", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
+  { id: "m-k1-21", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2021_22.pdf", k: 1, label: "K1", year: "2021/22", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
+  { id: "m-k1-22", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2022_23.pdf", k: 1, label: "K1", year: "2022/23", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
+  { id: "m-k1-23", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2023_24.pdf", k: 1, label: "K1", year: "2023/24", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
+  { id: "m-k1-24", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2024_25.pdf", k: 1, label: "K1", year: "2024/25", tasks: [["indukcija"], ["kompleksna"], ["absolutna"], ["supinf"]] },
+  { id: "m-k1-25", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2025_26.pdf", k: 1, label: "K1", year: "2025/26", tasks: [["indukcija"], ["kompleksna"], ["absolutna"], ["funkcije"]] },
   // 2. kolokvij
-  { id: "m-k2-20", s: "mat", k: 2, label: "K2", year: "2020/21", tasks: [["zaporedja"], ["zaporedja"], ["vrste"], ["uporaba", "funkcije"]] },
-  { id: "m-k2-21", s: "mat", k: 2, label: "K2", year: "2021/22", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
-  { id: "m-k2-22", s: "mat", k: 2, label: "K2", year: "2022/23", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
-  { id: "m-k2-23", s: "mat", k: 2, label: "K2", year: "2023/24", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
-  { id: "m-k2-24", s: "mat", k: 2, label: "K2", year: "2024/25", tasks: [["zaporedja"], ["zaporedja"], ["vrste"], ["limita"]] },
+  { id: "m-k2-20", s: "mat", pdf: "gradivo/matematika1/kolokvij2_2020_21.pdf", k: 2, label: "K2", year: "2020/21", tasks: [["zaporedja"], ["zaporedja"], ["vrste"], ["uporaba", "funkcije"]] },
+  { id: "m-k2-21", s: "mat", pdf: "gradivo/matematika1/kolokvij2_2021_22.pdf", k: 2, label: "K2", year: "2021/22", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
+  { id: "m-k2-22", s: "mat", pdf: "gradivo/matematika1/kolokvij2_2022_23.pdf", k: 2, label: "K2", year: "2022/23", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
+  { id: "m-k2-23", s: "mat", pdf: "gradivo/matematika1/kolokvij2_2023_24.pdf", k: 2, label: "K2", year: "2023/24", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
+  { id: "m-k2-24", s: "mat", pdf: "gradivo/matematika1/kolokvij2_2024_25.pdf", k: 2, label: "K2", year: "2024/25", tasks: [["zaporedja"], ["zaporedja"], ["vrste"], ["limita"]] },
   // 3. kolokvij
-  { id: "m-k3-20", s: "mat", k: 3, label: "K3", year: "2020/21", tasks: [["limita"], ["zveznost", "odvod"], ["uporaba"], ["uporaba"]] },
-  { id: "m-k3-21", s: "mat", k: 3, label: "K3", year: "2021/22", tasks: [["zveznost", "odvod"], ["odvod"], ["limita", "uporaba"], ["uporaba"], ["uporaba"]] },
+  { id: "m-k3-20", s: "mat", pdf: "gradivo/matematika1/kolokvij3_2020_21.pdf", k: 3, label: "K3", year: "2020/21", tasks: [["limita"], ["zveznost", "odvod"], ["uporaba"], ["uporaba"]] },
+  { id: "m-k3-21", s: "mat", pdf: "gradivo/matematika1/kolokvij3_2021_22.pdf", k: 3, label: "K3", year: "2021/22", tasks: [["zveznost", "odvod"], ["odvod"], ["limita", "uporaba"], ["uporaba"], ["uporaba"]] },
   // izpiti
-  { id: "m-i1-20", s: "mat", k: 9, label: "Izpit", year: "2020/21", tasks: [["kompleksna"], ["uporaba", "funkcije"], ["uporaba"], ["taylor"]] },
-  { id: "m-i1-22", s: "mat", k: 9, label: "Izpit", year: "2022/23", tasks: [["kompleksna", "limita"], ["zaporedja", "indukcija"], ["uporaba"], ["integral"]] },
-  { id: "m-i2-25", s: "mat", k: 9, label: "Izpit", year: "avg 2026", tasks: [["zaporedja", "vrste"], ["uporaba"], ["taylor"], ["integral"]] },
-  { id: "m-i3-25", s: "mat", k: 9, label: "Izpit", year: "sep 2026", tasks: [["taylor", "zaporedja"], ["uporaba", "odvod"], ["integral"], ["vrste"]] },
+  { id: "m-i1-20", s: "mat", pdf: "gradivo/matematika1/izpit1_2020_21.pdf", k: 9, label: "Izpit", year: "2020/21", tasks: [["kompleksna"], ["uporaba", "funkcije"], ["uporaba"], ["taylor"]] },
+  { id: "m-i1-22", s: "mat", pdf: "gradivo/matematika1/izpit1_2022_23.pdf", k: 9, label: "Izpit", year: "2022/23", tasks: [["kompleksna", "limita"], ["zaporedja", "indukcija"], ["uporaba"], ["integral"]] },
+  { id: "m-i2-25", s: "mat", pdf: "gradivo/matematika1/izpit2_2025_26.pdf", k: 9, label: "Izpit", year: "avg 2026", tasks: [["zaporedja", "vrste"], ["uporaba"], ["taylor"], ["integral"]] },
+  { id: "m-i3-25", s: "mat", pdf: "gradivo/matematika1/izpit3_2025_26.pdf", k: 9, label: "Izpit", year: "sep 2026", tasks: [["taylor", "zaporedja"], ["uporaba", "odvod"], ["integral"], ["vrste"]] },
 ];
 
 const PROBLEMS = [

@@ -389,7 +389,7 @@ function renderDetail() {
       const done = ps.filter(p => solved[pkey(p)]).length;
       return `<div class="sec">Iz preteklih kolokvijev · rešenih ${done}/${ps.length}</div>
       <ul class="probs" style="--c:${s.color}">${ps.map(p => { const pa = PAPERS.find(x => x.id === p.paper);
-        return `<li><div><div class="src">${pa.label} · ${pa.year} · ${p.n}. naloga</div><div class="tx">${p.text}</div></div>
+        return `<li><div><div class="src">${pa.label} · ${pa.year} · ${p.n}. naloga${pa.pdf ? ` · <a href="${pa.pdf}" target="_blank" style="color:inherit">PDF ↗</a>` : ""}</div><div class="tx">${p.text}</div></div>
         <button data-k="${pkey(p)}" class="${solved[pkey(p)] ? "ok" : ""}">${solved[pkey(p)] ? "rešila ✓" : "rešila?"}</button></li>`; }).join("")}</ul>`; })()}
     <div class="sec">Povezave · ${conns.length}</div>
     <ul class="conns">${conns.map(({o, why}) => `
