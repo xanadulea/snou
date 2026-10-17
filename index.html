@@ -185,6 +185,31 @@
   .mx > span { display: flex; gap: 10px; justify-content: space-between; }
   .mx i { font-style: normal; min-width: 14px; text-align: right; }
   .vec { text-decoration: overline; }
+  /* podteme */
+  .srow { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
+  .srow > span:first-child { flex: 1; }
+  .srow.z > span:first-child { color: var(--muted); }
+  .marks { display: flex; gap: 4px; flex: none; }
+  .marks button { width: 30px; height: 26px; border-radius: 7px; border: 1px solid var(--line); background: transparent; color: var(--faint); cursor: pointer; font: 600 13px Inter, sans-serif; }
+  .marks button:hover { color: var(--text); border-color: var(--muted); }
+  .marks button.z.on { background: var(--c); border-color: var(--c); color: #111; }
+  .marks button.n.on { background: #3a2326; border-color: #e8665a; color: #ff8a7d; }
+  .marks button.v.on { background: #fff; border-color: #fff; color: #111; }
+  .mlegend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin: 10px 0 6px; }
+  .mk { display: inline-block; width: 18px; text-align: center; margin-right: 4px; border-radius: 4px; }
+  .mk.z { color: var(--c, #fff); } .mk.n { color: #ff8a7d; } .mk.v { color: #fff; }
+  .tblock { margin-top: 18px; }
+  .thead { display: flex; align-items: baseline; gap: 8px; cursor: pointer; font-weight: 600; margin-bottom: 4px; }
+  .thead:hover .tn { text-decoration: underline; }
+  .ktag { font-size: 11px; font-weight: 600; color: #111; background: var(--c); border-radius: 4px; padding: 0 5px; }
+  .sbar { height: 8px; border-radius: 4px; background: var(--line); display: flex; overflow: hidden; margin: 14px 0 6px; }
+  .scount { display: flex; gap: 14px; flex-wrap: wrap; }
+  .ask { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin: 14px 0; }
+  .ask ul { margin: 0 0 10px; padding-left: 18px; font-size: 13.5px; line-height: 1.7; }
+  .ask .copy, .opensubj { font: 12.5px Inter, sans-serif; color: var(--text); background: transparent; border: 1px solid var(--c, var(--line)); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+  .opensubj { margin-top: 14px; }
+  .back { background: none; border: 0; color: var(--muted); cursor: pointer; font: 13px Inter, sans-serif; padding: 0; margin-bottom: 12px; }
+  .back:hover { color: var(--text); }
   @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 </style>
 </head>
@@ -222,6 +247,7 @@
 <script src="deep.js"></script>
 <script src="log.js"></script>
 <script src="naloge.js"></script>
+<script src="sub.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const NS = "http://www.w3.org/2000/svg";
@@ -247,6 +273,9 @@ function computeStatus() {
 let status = computeStatus();
 let notes = load("snou-notes");
 let solved = load("snou-solved");
+let marks = load("snou-marks");                 // "tema|podtema" → "z" znam · "n" ne znam · "v" vprašaj
+const mkey = (tid, x) => `${tid}|${x}`;
+let openSubj = null;
 const pkey = p => `${p.paper}-${p.n}`;
 
 let selected = null, hovered = null;
@@ -375,13 +404,69 @@ function highlight() {
 // ── izbrana tema ──
 function select(id) {
   selected = selected === id ? null : id;
-  highlight(); renderPapers();
-  renderDetail();
-  $("#drawer").classList.toggle("open", !!selected);
-  $("#scrim").classList.toggle("open", !!selected);
-  if (selected) $("#drawer").scrollTop = 0;
+  if (selected && openSubj && topic[selected].s !== openSubj) openSubj = null;
+  refreshDrawer(true);
 }
-function closeDrawer() { if (selected) select(selected); }
+function openSubject(sid) { openSubj = sid; selected = null; refreshDrawer(true); }
+function refreshDrawer(top) {
+  highlight(); renderPapers(); renderDetail();
+  const on = !!(selected || openSubj);
+  $("#drawer").classList.toggle("open", on);
+  $("#scrim").classList.toggle("open", on);
+  if (on && top) $("#drawer").scrollTop = 0;
+}
+function closeDrawer() { selected = null; openSubj = null; refreshDrawer(); }
+
+// ── podteme ──
+const MARKS = [["z", "✓", "znam"], ["n", "✗", "ne znam"], ["v", "?", "vprašaj Claude"]];
+function subRows(t) {
+  return (SUB[t.id] || []).map(x => { const m = marks[mkey(t.id, x)] || "";
+    return `<div class="srow ${m}"><span>${x}</span><span class="marks">${MARKS.map(([k, ic, lbl]) =>
+      `<button class="${k}${m === k ? " on" : ""}" data-mk="${mkey(t.id, x)}" data-v="${k}" title="${lbl}">${ic}</button>`).join("")}</span></div>`; }).join("");
+}
+function subCount(tids) {
+  const c = { z: 0, n: 0, v: 0, all: 0 };
+  tids.forEach(id => (SUB[id] || []).forEach(x => { c.all++; const m = marks[mkey(id, x)]; if (m) c[m]++; }));
+  return c;
+}
+function bindMarks(box) {
+  box.querySelectorAll("[data-mk]").forEach(b => b.onclick = () => {
+    marks[b.dataset.mk] === b.dataset.v ? delete marks[b.dataset.mk] : (marks[b.dataset.mk] = b.dataset.v);
+    save("snou-marks", marks); renderDetail(); renderSubjects();
+  });
+}
+const markLegend = `<div class="mlegend">${MARKS.map(([k, ic, lbl]) => `<span><b class="mk ${k}">${ic}</b>${lbl}</span>`).join("")}</div>`;
+
+function renderSubjectView() {
+  const box = $("#detail"), s = subj[openSubj], ts = TOPICS.filter(t => t.s === s.id);
+  const c = subCount(ts.map(t => t.id)), un = c.all - c.z - c.n - c.v;
+  const asks = ts.flatMap(t => (SUB[t.id] || []).filter(x => marks[mkey(t.id, x)] === "v").map(x => ({ t, x })));
+  const ni = s.exams.findIndex(e => e >= TODAY_ISO), k = ni + 1;
+  const pct = n => (n / Math.max(c.all, 1) * 100) + "%";
+  box.innerHTML = `
+    <div style="font-size:12px;color:${s.color}">Predmet</div>
+    <h2>${s.name}</h2>
+    <div class="muted small">Vse teme in kaj je v njih. Označi, kar znaš, česar ne znaš in kar me želiš vprašati.</div>
+    <div class="sbar"><div style="width:${pct(c.z)};background:${s.color}"></div><div style="width:${pct(c.v)};background:#fff"></div><div style="width:${pct(c.n)};background:#e8665a"></div></div>
+    <div class="scount small"><span><b style="color:${s.color}">${c.z}</b> znam</span><span><b style="color:#e8665a">${c.n}</b> ne znam</span><span><b>${c.v}</b> vprašaj</span><span class="muted">${un} neoznačenih</span></div>
+    ${asks.length ? `<div class="ask"><div class="lbl">Za vprašati Claude · ${asks.length}</div>
+      <ul>${asks.map(({t, x}) => `<li><span class="muted">${t.name}:</span> ${x}</li>`).join("")}</ul>
+      <button class="copy">Kopiraj seznam</button><span class="copied muted small"></span></div>` : ""}
+    ${markLegend}
+    ${ts.map(t => { const tc = subCount([t.id]); const onNext = (t.k || []).includes(k);
+      return `<div class="tblock" style="--c:${s.color}">
+        <div class="thead" data-open="${t.id}"><span class="tn">${t.name}</span>${onNext ? `<span class="ktag">K${k}</span>` : ""}<span class="muted small" style="margin-left:auto">${tc.z}/${tc.all} znam${tc.v ? ` · ${tc.v} vprašaj` : ""}</span></div>
+        ${subRows(t)}</div>`; }).join("")}`;
+  box.style.setProperty("--c", s.color);
+  bindMarks(box);
+  box.querySelectorAll("[data-open]").forEach(h => h.onclick = () => { selected = null; select(h.dataset.open); });
+  const cp = box.querySelector(".copy");
+  if (cp) cp.onclick = async () => {
+    const txt = `Vprašanja (${s.name}):\n` + asks.map(({t, x}) => `- ${t.name}: ${x}`).join("\n");
+    try { await navigator.clipboard.writeText(txt); box.querySelector(".copied").textContent = " Kopirano. Prilepi mi ga v klepet."; }
+    catch { box.querySelector(".copied").textContent = " Kopiranje ni uspelo, označi besedilo ročno."; }
+  };
+}
 
 function deepHtml(t, s) {
   const d = (typeof DEEP !== "undefined") && DEEP[t.id];
@@ -397,18 +482,22 @@ function deepHtml(t, s) {
 
 function renderDetail() {
   const box = $("#detail");
-  if (!selected) return;
+  if (!selected) { if (openSubj) renderSubjectView(); return; }
   const t = topic[selected], s = subj[t.s], st = status[t.id] ?? 0;
   const conns = LINKS.filter(([a, b]) => a === t.id || b === t.id)
     .map(([a, b, why]) => ({ o: topic[a === t.id ? b : a], why }))
     .sort((x, y) => x.o.s.localeCompare(y.o.s));
+  const tc = subCount([t.id]);
+  box.style.setProperty("--c", s.color);
   box.innerHTML = `
+    ${openSubj ? `<button class="back">← ${s.name}: vse teme</button>` : ""}
     <div style="font-size:12px;color:${s.color}">${s.name}</div>
     <h2>${t.name}</h2>
     <div class="muted">${t.note || ""}</div>
     <div class="status">${STATUS.map((n, i) =>
       `<button data-i="${i}" class="${i === st ? "sel" : ""}" style="${i === st ? `background:${s.color};border-color:${s.color}` : ""}">${n}</button>`).join("")}
     </div>
+    ${SUB[t.id] ? `<div class="sec">Kaj je v tej temi · znaš ${tc.z}/${tc.all}</div>${markLegend}${subRows(t)}` : ""}
     ${(() => { const sp = support(t.id); return sp.length && (status[t.id] ?? 0) < 2 ? `
     <div class="sec">Kar že znaš, ti pomaga tukaj</div>
     <ul class="help">${sp.map(({o, why, v}) => `<li><span class="dot" style="background:${subj[o.s].color};width:8px;height:8px;border-radius:50%;flex:none;display:inline-block"></span>
@@ -444,6 +533,8 @@ function renderDetail() {
     save("snou-solved", solved); renderDetail(); renderPapers();
   });
   box.querySelectorAll(".conns li").forEach(li => li.onclick = () => { selected = null; select(li.dataset.id); });
+  bindMarks(box);
+  const bk = box.querySelector(".back"); if (bk) bk.onclick = () => { selected = null; refreshDrawer(true); };
   $("#note").oninput = e => { notes[t.id] = e.target.value; save("snou-notes", notes); };
 }
 
@@ -626,6 +717,8 @@ function renderSubjects() {
         ${next ? `<div class="big">${days === 0 ? "danes" : days + " dni"}</div><div class="muted small">do ${k}. kolokvija · ${fmt(new Date(next + "T00:00"), {day: "numeric", month: "long"})}</div>` : ""}
         <div class="bar"><div style="width:${c[2] / n * 100}%"></div><div style="width:${c[1] / n * 100}%;opacity:.45"></div></div>
         <div class="muted small">${c[2]} od ${n} tem znaš${c[1] ? ` · ${c[1]} vadiš` : ""}</div>
+        ${(() => { const sc = subCount(ts.map(t => t.id)); return sc.v ? `<div class="small" style="margin-top:6px">❔ ${sc.v} za vprašati Claude</div>` : ""; })()}
+        <button class="opensubj" data-subj="${s.id}">Vse teme in podteme →</button>
       </div>
       <div>${mid}${next ? "" : taskHtml}</div>
       <div>
@@ -639,6 +732,7 @@ function renderSubjects() {
     </div>`;
   }).join("");
   $("#subjects").querySelectorAll("[data-id]").forEach(b => b.onclick = () => { selected = null; select(b.dataset.id); });
+  $("#subjects").querySelectorAll("[data-subj]").forEach(b => b.onclick = () => openSubject(b.dataset.subj));
   $("#subjects").querySelectorAll(".toggle").forEach(b => b.onclick = () => { showAllPapers[b.dataset.s] = !showAllPapers[b.dataset.s]; renderSubjects(); });
   renderPapers();
 }
