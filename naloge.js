@@ -109,3 +109,37 @@ Object.assign(GRADIVO, {
                { v: "Vaje 6. okt"}, { v: "Vaje 8. okt"}],
   uvod:       [{ v: "Vaje 8. okt"}],
 });
+
+// ─────────────────────────────────────────────────────────────
+//  LINEARNA ALGEBRA — pretekli računski kolokviji in izpiti
+// ─────────────────────────────────────────────────────────────
+const mx = rows => `<span class="mx">${rows.map(r => `<span>${r.map(x => `<i>${x}</i>`).join("")}</span>`).join("")}</span>`;
+const vec = s => `<span class="vec">${s}</span>`;
+
+PAPERS.push(
+  { id: "la-k1-24", s: "la", short: "’24", k: 1, label: "K1", year: "2024/25", tasks: [["skalarni", "premice"], ["vektorji", "skalarni"], ["matrike"], ["lastne"]] },
+  { id: "la-k1-25", s: "la", short: "’25", k: 1, label: "K1", year: "2025/26", tasks: [["vektorji", "det2", "premice"], ["lastne"], ["preslikave"], ["baza", "preslikave"]] },
+  { id: "la-k2-24", s: "la", short: "’24", k: 2, label: "K2", year: "2024/25", tasks: [["vektorski", "mesani"], ["ravnine"], ["sistemi"], ["determinante"]] },
+  { id: "la-k2-24b", s: "la", short: "’24b", k: 2, label: "K2", year: "2024/25 (2. verzija)", tasks: [["ravnine"], ["vektorski", "mesani"], ["sistemi"], ["determinante"]] },
+  { id: "la-k2-25", s: "la", short: "’25", k: 2, label: "K2", year: "2025/26", tasks: [["mesani"], ["ravnine"], ["sistemi"], ["determinante"]] },
+  { id: "la-i1-24", s: "la", short: "jan25", k: 9, label: "Izpit", year: "jan 2025", tasks: [["premice"], ["lastne"], ["ravnine"], ["determinante"]] },
+  { id: "la-i2-24", s: "la", short: "feb25", k: 9, label: "Izpit", year: "feb 2025", tasks: [["vektorji", "skalarni"], ["lastne", "matrike"], ["ravnine"], ["determinante"]] },
+  { id: "la-i2-25", s: "la", short: "feb26", k: 9, label: "Izpit", year: "feb 2026", tasks: [["vektorski", "ravnine"], ["determinante"], ["determinante"], ["lastne", "baza"]] },
+);
+
+PROBLEMS.push(
+  // ── K1 2024/25 (28. 11. 2024) ──
+  { paper: "la-k1-24", n: 1, t: "skalarni", text: `Dane so točke A(−1, 2), B(1, 3), C(−3, 4). Najdite pravokotno projekcijo točke C na premico, ki gre skozi točki A in B.` },
+  { paper: "la-k1-24", n: 2, t: "vektorji", text: `Dane so točke A(−3, −2), B(0, 1) in D(−5, 2). Poiščite točko C, tako da štirikotnik ABCD določa paralelogram, in izračunajte njegove notranje kote.` },
+  { paper: "la-k1-24", n: 3, t: "matrike", text: `Določite, ali obstajajo E + F⁻¹, FE⁻¹ in F⁻¹E. Izračunajte tiste, ki obstajajo. Izberite a) ali b).<br>(a) E = ${mx([[2, "−1"], [0, 0]])}, F = ${mx([[1, 4], [5, "−2"]])}<br>(b) E = ${mx([[3, 0], ["−1", 1]])}, Fᵀ = ${mx([[0, 2], [0, 4]])}` },
+  { paper: "la-k1-24", n: 4, t: "lastne", text: `Najdite vse lastne vrednosti matrike A = ${mx([[1, "−3"], ["−3", 1]])}. Za vsako lastno vrednost najdite vse pripadajoče lastne vektorje in jih narišite.` },
+  // ── K1 2025/26 (27. 11. 2025) ──
+  { paper: "la-k1-25", n: 1, t: "vektorji", text: `Naj bodo v ravnini dane točke A(1, −2), B(4, 1) in C(−2, 3).<br>(a) Izračunaj dolžino vektorja 3${vec("AB")} − ${vec("AC")}.<br>(b) Naj bo D taka točka, da točke ABCD tvorijo paralelogram. Določi točko D in izračunaj ploščino paralelograma.<br>(c) Zapiši enačbo premice p, ki poteka skozi točko A in je vzporedna vektorju 3${vec("AB")} − ${vec("AC")}.` },
+  { paper: "la-k1-25", n: 2, t: "lastne", text: `Dana je matrika A = ${mx([["−2", 2], ["−2", 3]])}.<br>(a) Diagonaliziraj matriko A.<br>(b) Izračunaj A³ − 3A − 2I.` },
+  { paper: "la-k1-25", n: 3, t: "preslikave", text: `Dana je preslikava T(x, y) = (4x − 2y, x + y).<br>(a) Preveri, da je preslikava T linearna.<br>(b) Določi jedro in sliko preslikave T.<br>(c) Ali je T obrnljiva? Če je, določi njen inverz.` },
+  { paper: "la-k1-25", n: 4, t: "baza", text: `Dana je baza B = {(1, 1), (2, −1)}, vektor v = (3, 7) ter preslikava T(x, y) = (4x − y, 2x + 3y).<br>(a) Izračunaj [v]<sub>B</sub> in [T(v)]<sub>B</sub>.<br>(b) Določi prehodno matriko [P]<sup>S</sup><sub>B</sub> med bazo B in standardno bazo S.<br>(c) Izračunaj [T]<sup>B</sup><sub>B</sub> in preveri, da velja [T]<sup>B</sup><sub>B</sub>[v]<sub>B</sub> = [T(v)]<sub>B</sub>.` },
+);
+
+Object.assign(GRADIVO, {
+  vektorji: [{ v: "Vektorji v ravnini" }],
+});
