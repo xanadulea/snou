@@ -40,7 +40,7 @@
 
   /* diagram */
   .stage { position: relative; overflow-x: auto; }
-  svg { display: block; width: 100%; min-width: 1000px; height: auto; }
+  #svg { display: block; width: 100%; min-width: 1000px; height: auto; }
   .arc { fill: none; stroke-width: 1.6; opacity: .55; transition: opacity .15s, stroke-width .15s; }
   .dim .arc { opacity: .06; }
   .dim .arc.on { opacity: 1; stroke-width: 2.6; }
@@ -70,6 +70,20 @@
   .prog { margin: 10px 0; }
   .prog .row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
   .prog .track { height: 8px; border-radius: 4px; background: var(--line); display: flex; overflow: hidden; }
+  /* globlje */
+  .deep { margin-top: 6px; }
+  .tl { list-style: none; padding: 0; margin: 0; position: relative; }
+  .tl::before { content: ""; position: absolute; left: 84px; top: 6px; bottom: 6px; width: 1px; background: var(--line); }
+  .tl li { display: grid; grid-template-columns: 76px 1fr; gap: 20px; padding: 6px 0; position: relative; }
+  .tl li::before { content: ""; position: absolute; left: 81px; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); }
+  .tl .yr { font: 400 17px/1.2 "Instrument Serif", serif; color: var(--c); text-align: right; }
+  .tl .tx { font-size: 13.5px; color: #cfcdc7; }
+  .ideja p { margin: 0 0 10px; font-size: 14.5px; line-height: 1.65; }
+  .pic { display: flex; justify-content: center; padding: 10px 0; }
+  .defn p { margin: 0 0 8px; }
+  .defn .math { font: 400 20px/1.3 "Instrument Serif", serif; padding: 4px 0 4px 16px; border-left: 2px solid var(--c); }
+  .defn .ex { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-top: 12px; line-height: 1.7; }
+  .star { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -99,6 +113,7 @@
 </div>
 
 <script src="data.js"></script>
+<script src="deep.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const NS = "http://www.w3.org/2000/svg";
@@ -197,6 +212,8 @@ function renderDiagram() {
     const x = pos[t.id], s = subj[t.s], st = status[t.id] ?? 0;
     const g = el("g", { class: "bar" }, svg);
     el("rect", { x: x - 5, y: BASE, width: 10, height: BAR, rx: 2, fill: s.color, "fill-opacity": STATUS_OP[st] }, g);
+    if (typeof DEEP !== "undefined" && DEEP[t.id])
+      el("circle", { class: "star", cx: x, cy: BASE - 7, r: 2.6, fill: "#fff", style: `filter: drop-shadow(0 0 4px ${s.color})` }, g);
     const lab = el("text", { class: "label", x: x + 4, y: BASE + BAR + 16, transform: `rotate(55 ${x + 4} ${BASE + BAR + 16})` }, g);
     lab.textContent = t.name;
     lab.dataset.id = t.id;
@@ -239,6 +256,18 @@ function select(id) {
   renderDetail();
 }
 
+function deepHtml(t, s) {
+  const d = (typeof DEEP !== "undefined") && DEEP[t.id];
+  if (!d) return "";
+  let h = `<div class="deep" style="--c:${s.color}">`;
+  if (d.izvor) h += `<div class="sec">Od kod izvira</div><ul class="tl">${d.izvor.map(e =>
+      `<li><span class="yr">${e.leto}</span><span class="tx">${e.txt}</span></li>`).join("")}</ul>`;
+  if (d.ideja) h += `<div class="sec">Ideja</div><div class="ideja">${d.ideja.map(p => `<p>${p}</p>`).join("")}</div>`;
+  if (d.slika) h += `<div class="pic">${d.slika}</div>`;
+  if (d.definicija) h += `<div class="sec">Definicija</div><div class="defn">${d.definicija}</div>`;
+  return h + `</div>`;
+}
+
 function renderDetail() {
   const box = $("#detail");
   if (!selected) { box.innerHTML = `<div class="empty">Klikni na temo, da vidiš njene povezave.</div>`; return; }
@@ -253,6 +282,7 @@ function renderDetail() {
     <div class="status">${STATUS.map((n, i) =>
       `<button data-i="${i}" class="${i === st ? "sel" : ""}" style="${i === st ? `background:${s.color};border-color:${s.color}` : ""}">${n}</button>`).join("")}
     </div>
+    ${deepHtml(t, s)}
     <div class="sec">Povezave · ${conns.length}</div>
     <ul class="conns">${conns.map(({o, why}) => `
       <li data-id="${o.id}"><span class="dot" style="background:${subj[o.s].color}"></span>
