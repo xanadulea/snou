@@ -109,6 +109,21 @@
   .tasks ul { list-style: none; padding: 0; margin: 8px 0 0; }
   .tasks .dt { color: var(--muted); font-size: 12.5px; min-width: 58px; }
   .tasks .late { color: #e8665a; }
+  /* prenos znanja */
+  .xfer .g { padding: 10px 0; border-top: 1px solid var(--line); }
+  .xfer .g:first-of-type { border-top: 0; }
+  .xfer .from { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 7px; }
+  .xfer .from b { color: var(--text); font-weight: 600; }
+  .xfer .to { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .xfer .to button, .help li { font: 12.5px Inter, sans-serif; }
+  .xfer .to button { color: var(--text); background: var(--bg); border: 1px solid var(--c); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+  .xfer .to .why { display: block; color: var(--muted); font-size: 11.5px; }
+  .plan .next button.ready::before { content: "✦ "; color: var(--c); }
+  .help { list-style: none; padding: 0; margin: 0; }
+  .help li { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; font-size: 13.5px; }
+  .help .why { color: var(--muted); font-size: 12.5px; }
+  .ring { pointer-events: none; animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 </style>
 </head>
 <body>
@@ -136,6 +151,11 @@
 <div class="below">
   <div class="card" id="detail"><div class="empty">Klikni na temo, da vidiš njene povezave.</div></div>
   <div class="side">
+  <div class="card xfer">
+    <h2>Prenos znanja</h2>
+    <div class="muted" style="font-size:13px">Kar že znaš v enem predmetu, ti odpre teme v drugem.</div>
+    <div id="xfer" style="margin-top:6px"></div>
+  </div>
   <div class="card plan">
     <h2>Načrt</h2>
     <div class="muted" style="font-size:13px">Kaj je naslednje, šteto od kolokvijev nazaj.</div>
@@ -265,6 +285,8 @@ function renderDiagram() {
     const x = pos[t.id], s = subj[t.s], st = status[t.id] ?? 0;
     const g = el("g", { class: "bar" }, svg);
     el("rect", { x: x - 5, y: BASE, width: 10, height: BAR, rx: 2, fill: s.color, "fill-opacity": STATUS_OP[st] }, g);
+    if (ready(t.id))
+      el("rect", { class: "ring", x: x - 8, y: BASE - 3, width: 16, height: BAR + 6, rx: 4, fill: "none", stroke: s.color, "stroke-width": 1.5 }, g);
     if (typeof DEEP !== "undefined" && DEEP[t.id])
       el("circle", { class: "star", cx: x, cy: BASE - 7, r: 2.6, fill: "#fff", style: `filter: drop-shadow(0 0 4px ${s.color})` }, g);
     const lab = el("text", { class: "label", x: x + 4, y: BASE + BAR + 16, transform: `rotate(55 ${x + 4} ${BASE + BAR + 16})` }, g);
@@ -335,6 +357,10 @@ function renderDetail() {
     <div class="status">${STATUS.map((n, i) =>
       `<button data-i="${i}" class="${i === st ? "sel" : ""}" style="${i === st ? `background:${s.color};border-color:${s.color}` : ""}">${n}</button>`).join("")}
     </div>
+    ${(() => { const sp = support(t.id); return sp.length && (status[t.id] ?? 0) < 2 ? `
+    <div class="sec">Kar že znaš, ti pomaga tukaj</div>
+    <ul class="help">${sp.map(({o, why, v}) => `<li><span class="dot" style="background:${subj[o.s].color};width:8px;height:8px;border-radius:50%;flex:none;display:inline-block"></span>
+      <span><b>${o.name}</b> <span class="muted">· ${STATUS[v]}</span>${why ? `<br><span class="why">${why}</span>` : ""}</span></li>`).join("")}</ul>` : ""; })()}
     ${deepHtml(t, s)}
     <div class="sec">Povezave · ${conns.length}</div>
     <ul class="conns">${conns.map(({o, why}) => `
@@ -346,7 +372,7 @@ function renderDetail() {
   box.querySelectorAll(".status button").forEach(b => b.onclick = () => {
     localStatus[t.id] = { v: +b.dataset.i, at: TODAY_ISO }; save("snou-status2", localStatus);
     status = computeStatus();
-    renderDiagram(); renderDetail(); renderProgress(); renderLegend(); renderPlan();
+    renderDiagram(); renderDetail(); renderProgress(); renderLegend(); renderPlan(); renderXfer();
   });
   box.querySelectorAll(".conns li").forEach(li => li.onclick = () => { selected = null; select(li.dataset.id); });
   $("#note").oninput = e => { notes[t.id] = e.target.value; save("snou-notes", notes); };
@@ -444,10 +470,44 @@ function renderDayLog() {
 }
 
 // ── načrt ──
+// ── prenos znanja ──
+// Teme iz DRUGIH predmetov, ki jih že vadiš ali znaš in so povezane s to temo.
+function support(id) {
+  const t = topic[id];
+  return LINKS.filter(([a, b]) => a === id || b === id)
+    .map(([a, b, why]) => ({ o: topic[a === id ? b : a], why }))
+    .filter(({o}) => o && o.s !== t.s && (status[o.id] ?? 0) >= 1)
+    .map(x => ({ ...x, v: status[x.o.id] }));
+}
+const ready = id => (status[id] ?? 0) < 2 && support(id).length > 0;
+
+function renderXfer() {
+  const groups = {};
+  TOPICS.forEach(t => {
+    if ((status[t.id] ?? 0) >= 2) return;
+    support(t.id).forEach(({o, why}) => (groups[o.id] ||= []).push({ t, why }));
+  });
+  const ids = Object.keys(groups).sort((a, b) => (status[b] - status[a]) || groups[b].length - groups[a].length);
+  $("#xfer").innerHTML = ids.length ? ids.map(id => {
+    const o = topic[id], so = subj[o.s];
+    return `<div class="g">
+      <div class="from"><span class="dot" style="background:${so.color}"></span>${STATUS[status[id]] === "znam" ? "Znaš" : "Vadiš"} <b>${o.name}</b> → lahko začneš</div>
+      <div class="to">${groups[id].map(({t, why}) =>
+        `<button data-id="${t.id}" style="--c:${subj[t.s].color};border-color:${subj[t.s].color}">${t.name}${why ? `<span class="why">${why}</span>` : ""}</button>`).join("")}</div>
+    </div>`;
+  }).join("") : `<div class="muted" style="font-size:13px;margin-top:6px">Ko temo označiš kot <b>vadim</b> ali <b>znam</b>, ti tukaj pokažem, katere teme v drugih predmetih s tem že lahko začneš.</div>`;
+  $("#xfer").querySelectorAll("button").forEach(b => b.onclick = () => {
+    selected = null; select(b.dataset.id);
+    $("#detail").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
 function renderPlan() {
   const rows = SUBJECTS.map(s => {
     const next = s.exams.filter(e => e >= TODAY_ISO).sort()[0];
-    const left = TOPICS.filter(t => t.s === s.id && (status[t.id] ?? 0) < 2);
+    const left = TOPICS.filter(t => t.s === s.id && (status[t.id] ?? 0) < 2)
+      .map((t, i) => ({ t, i, r: ready(t.id) ? 1 : 0 }))
+      .sort((a, b) => b.r - a.r || a.i - b.i).map(x => x.t);
     const days = next ? Math.round((new Date(next + "T00:00") - TODAY) / 864e5) : null;
     return { s, next, left, days };
   }).filter(r => r.next).sort((a, b) => a.days - b.days);
@@ -458,7 +518,7 @@ function renderPlan() {
       <div class="top"><span class="nm"><span class="dot" style="background:${s.color}"></span>${s.name}</span>
         <span class="when">${days} dni</span></div>
       <div class="pace">${left.length ? `${left.length} tem še ni »znam« · ≈ ${pace} na teden do ${fmt(new Date(next + "T00:00"), {day: "numeric", month: "short"})}` : "Vse teme znaš. Ponavljaj."}</div>
-      <div class="next">${left.slice(0, 3).map(t => `<button data-id="${t.id}">${t.name}</button>`).join("")}</div>
+      <div class="next">${left.slice(0, 3).map(t => `<button data-id="${t.id}" class="${ready(t.id) ? "ready" : ""}" title="${ready(t.id) ? "Del že znaš iz drugega predmeta" : ""}">${t.name}</button>`).join("")}</div>
     </div>`;
   }).join("");
   $("#plan").querySelectorAll("button").forEach(b => b.onclick = () => {
@@ -476,7 +536,7 @@ function renderTasks() {
   }).join("")}</ul>` : `<div class="muted" style="font-size:13px;margin-top:6px">Še ni rokov. Pošlji mi datume poročil in nalog.</div>`;
 }
 
-renderExams(); renderHeatmap(); renderLegend(); renderDiagram(); renderProgress(); renderPlan(); renderTasks();
+renderExams(); renderHeatmap(); renderLegend(); renderDiagram(); renderProgress(); renderPlan(); renderXfer(); renderTasks();
 </script>
 </body>
 </html>
