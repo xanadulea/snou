@@ -395,7 +395,7 @@ function renderDetail() {
       <span><b>${o.name}</b> <span class="muted">· ${STATUS[v]}</span>${why ? `<br><span class="why">${why}</span>` : ""}</span></li>`).join("")}</ul>` : ""; })()}
     ${deepHtml(t, s)}
     ${(() => { const g = ((typeof GRADIVO !== "undefined") && GRADIVO[t.id]) || []; if (!g.length && !t.ch) return "";
-      const chip = (x, lbl) => `<a class="gchip" href="${x.href}" target="_blank" style="--c:${s.color}">${lbl}</a>`;
+      const chip = (x, lbl) => `<span class="gchip" style="--c:${s.color}">${lbl}</span>`;
       const book = t.ch ? `<div class="grow"><span class="gl">Knjiga</span><span class="gchip book" style="--c:${s.color}">Etkina, ${t.ch}. poglavje</span></div>` : "";
       const zs = g.filter(x => x.z), vs = g.filter(x => x.v);
       return `<div class="sec">Gradivo</div><div class="gr">${book}
@@ -405,7 +405,7 @@ function renderDetail() {
       const done = ps.filter(p => solved[pkey(p)]).length;
       return `<div class="sec">${t.s === "mat" ? "Iz preteklih kolokvijev" : "Naloge"} · rešenih ${done}/${ps.length}</div>
       <ul class="probs" style="--c:${s.color}">${ps.map(p => { const pa = PAPERS.find(x => x.id === p.paper);
-        return `<li><div><div class="src">${pa.label} · ${pa.year} · ${p.n}. naloga${p.code ? " · " + p.code : ""}${pa.pdf ? ` · <a href="${pa.pdf}" target="_blank" style="color:inherit">PDF ↗</a>` : ""}</div><div class="tx">${p.text}</div></div>
+        return `<li><div><div class="src">${pa.label} · ${pa.year} · ${p.n}. naloga${p.code ? " · " + p.code : ""}</div><div class="tx">${p.text}</div></div>
         <button data-k="${pkey(p)}" class="${solved[pkey(p)] ? "ok" : ""}">${solved[pkey(p)] ? "rešila ✓" : "rešila?"}</button></li>`; }).join("")}</ul>`; })()}
     <div class="sec">Povezave · ${conns.length}</div>
     <ul class="conns">${conns.map(({o, why}) => `

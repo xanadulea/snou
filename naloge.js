@@ -8,26 +8,26 @@ const fr = (a, b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>
 
 const PAPERS = [
   // Matematika 1 — 1. kolokvij
-  { id: "m-k1-20", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2020_21.pdf", k: 1, label: "K1", year: "2020/21", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
-  { id: "m-k1-21", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2021_22.pdf", k: 1, label: "K1", year: "2021/22", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
-  { id: "m-k1-22", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2022_23.pdf", k: 1, label: "K1", year: "2022/23", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
-  { id: "m-k1-23", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2023_24.pdf", k: 1, label: "K1", year: "2023/24", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
-  { id: "m-k1-24", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2024_25.pdf", k: 1, label: "K1", year: "2024/25", tasks: [["indukcija"], ["kompleksna"], ["absolutna"], ["supinf"]] },
-  { id: "m-k1-25", s: "mat", pdf: "gradivo/matematika1/kolokvij1_2025_26.pdf", k: 1, label: "K1", year: "2025/26", tasks: [["indukcija"], ["kompleksna"], ["absolutna"], ["funkcije"]] },
+  { id: "m-k1-20", s: "mat", k: 1, label: "K1", year: "2020/21", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
+  { id: "m-k1-21", s: "mat", k: 1, label: "K1", year: "2021/22", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
+  { id: "m-k1-22", s: "mat", k: 1, label: "K1", year: "2022/23", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
+  { id: "m-k1-23", s: "mat", k: 1, label: "K1", year: "2023/24", tasks: [["indukcija"], ["absolutna"], ["kompleksna"], ["supinf"]] },
+  { id: "m-k1-24", s: "mat", k: 1, label: "K1", year: "2024/25", tasks: [["indukcija"], ["kompleksna"], ["absolutna"], ["supinf"]] },
+  { id: "m-k1-25", s: "mat", k: 1, label: "K1", year: "2025/26", tasks: [["indukcija"], ["kompleksna"], ["absolutna"], ["funkcije"]] },
   // 2. kolokvij
-  { id: "m-k2-20", s: "mat", pdf: "gradivo/matematika1/kolokvij2_2020_21.pdf", k: 2, label: "K2", year: "2020/21", tasks: [["zaporedja"], ["zaporedja"], ["vrste"], ["uporaba", "funkcije"]] },
-  { id: "m-k2-21", s: "mat", pdf: "gradivo/matematika1/kolokvij2_2021_22.pdf", k: 2, label: "K2", year: "2021/22", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
-  { id: "m-k2-22", s: "mat", pdf: "gradivo/matematika1/kolokvij2_2022_23.pdf", k: 2, label: "K2", year: "2022/23", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
-  { id: "m-k2-23", s: "mat", pdf: "gradivo/matematika1/kolokvij2_2023_24.pdf", k: 2, label: "K2", year: "2023/24", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
-  { id: "m-k2-24", s: "mat", pdf: "gradivo/matematika1/kolokvij2_2024_25.pdf", k: 2, label: "K2", year: "2024/25", tasks: [["zaporedja"], ["zaporedja"], ["vrste"], ["limita"]] },
+  { id: "m-k2-20", s: "mat", k: 2, label: "K2", year: "2020/21", tasks: [["zaporedja"], ["zaporedja"], ["vrste"], ["uporaba", "funkcije"]] },
+  { id: "m-k2-21", s: "mat", k: 2, label: "K2", year: "2021/22", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
+  { id: "m-k2-22", s: "mat", k: 2, label: "K2", year: "2022/23", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
+  { id: "m-k2-23", s: "mat", k: 2, label: "K2", year: "2023/24", tasks: [["funkcije"], ["zaporedja"], ["zaporedja"], ["vrste"]] },
+  { id: "m-k2-24", s: "mat", k: 2, label: "K2", year: "2024/25", tasks: [["zaporedja"], ["zaporedja"], ["vrste"], ["limita"]] },
   // 3. kolokvij
-  { id: "m-k3-20", s: "mat", pdf: "gradivo/matematika1/kolokvij3_2020_21.pdf", k: 3, label: "K3", year: "2020/21", tasks: [["limita"], ["zveznost", "odvod"], ["uporaba"], ["uporaba"]] },
-  { id: "m-k3-21", s: "mat", pdf: "gradivo/matematika1/kolokvij3_2021_22.pdf", k: 3, label: "K3", year: "2021/22", tasks: [["zveznost", "odvod"], ["odvod"], ["limita", "uporaba"], ["uporaba"], ["uporaba"]] },
+  { id: "m-k3-20", s: "mat", k: 3, label: "K3", year: "2020/21", tasks: [["limita"], ["zveznost", "odvod"], ["uporaba"], ["uporaba"]] },
+  { id: "m-k3-21", s: "mat", k: 3, label: "K3", year: "2021/22", tasks: [["zveznost", "odvod"], ["odvod"], ["limita", "uporaba"], ["uporaba"], ["uporaba"]] },
   // izpiti
-  { id: "m-i1-20", s: "mat", pdf: "gradivo/matematika1/izpit1_2020_21.pdf", k: 9, label: "Izpit", year: "2020/21", tasks: [["kompleksna"], ["uporaba", "funkcije"], ["uporaba"], ["taylor"]] },
-  { id: "m-i1-22", s: "mat", pdf: "gradivo/matematika1/izpit1_2022_23.pdf", k: 9, label: "Izpit", year: "2022/23", tasks: [["kompleksna", "limita"], ["zaporedja", "indukcija"], ["uporaba"], ["integral"]] },
-  { id: "m-i2-25", s: "mat", pdf: "gradivo/matematika1/izpit2_2025_26.pdf", k: 9, label: "Izpit", year: "avg 2026", tasks: [["zaporedja", "vrste"], ["uporaba"], ["taylor"], ["integral"]] },
-  { id: "m-i3-25", s: "mat", pdf: "gradivo/matematika1/izpit3_2025_26.pdf", k: 9, label: "Izpit", year: "sep 2026", tasks: [["taylor", "zaporedja"], ["uporaba", "odvod"], ["integral"], ["vrste"]] },
+  { id: "m-i1-20", s: "mat", k: 9, label: "Izpit", year: "2020/21", tasks: [["kompleksna"], ["uporaba", "funkcije"], ["uporaba"], ["taylor"]] },
+  { id: "m-i1-22", s: "mat", k: 9, label: "Izpit", year: "2022/23", tasks: [["kompleksna", "limita"], ["zaporedja", "indukcija"], ["uporaba"], ["integral"]] },
+  { id: "m-i2-25", s: "mat", k: 9, label: "Izpit", year: "avg 2026", tasks: [["zaporedja", "vrste"], ["uporaba"], ["taylor"], ["integral"]] },
+  { id: "m-i3-25", s: "mat", k: 9, label: "Izpit", year: "sep 2026", tasks: [["taylor", "zaporedja"], ["uporaba", "odvod"], ["integral"], ["vrste"]] },
 ];
 
 const PROBLEMS = [
@@ -64,25 +64,23 @@ const PROBLEMS = [
 ];
 
 // ─────────────────────────────────────────────────────────────
-//  GRADIVO: zapiski predavanj (poglavje → stran v PDF) in vaje za vsako temo
+//  GRADIVO: kje je tema v zapiskih (z) in na katerih vajah (v) — samo za orientacijo
 // ─────────────────────────────────────────────────────────────
-const Z = "gradivo/matematika1/zapiski/Matematika1_Slapar.pdf";
-const V = f => `gradivo/matematika1/vaje/${f}.pdf`;
 const GRADIVO = {
-  mnozice:   [{ z: "1. Množice in izjave", href: Z + "#page=4" }, { v: "Množice", href: V("vaje2") }, { v: "Logika in izjavni račun", href: V("vaje3") }],
-  indukcija: [{ z: "2.1 Naravna števila", href: Z + "#page=10" }, { v: "Matematična indukcija", href: V("vaje_indukcija") }],
-  absolutna: [{ z: "2.4 Realna števila", href: Z + "#page=15" }, { v: "Števila (absolutna vrednost)", href: V("vaje5") }, { v: "Ponavljanje", href: V("vaje1") }, { v: "Ponavljanje (krajše)", href: V("Ponavljanje") }],
-  supinf:    [{ z: "2.4 Realna števila", href: Z + "#page=15" }, { v: "Števila (sup, inf)", href: V("vaje5") }],
-  kompleksna:[{ z: "2.5 Kompleksna števila", href: Z + "#page=22" }, { v: "Kompleksna števila", href: V("vaje6") }],
-  funkcije:  [{ z: "3. Preslikave", href: Z + "#page=28" }, { z: "6. Realne funkcije", href: Z + "#page=53" }, { v: "Funkcije", href: V("vaje7") }, { v: "Elementarne funkcije", href: V("vaje10") }],
-  zaporedja: [{ z: "4. Zaporedja", href: Z + "#page=31" }, { v: "Zaporedja", href: V("vaje8") }, { v: "Zaporedja, dodatno", href: V("vaje_zaporedja_dodatno") }],
-  vrste:     [{ z: "5. Številske vrste", href: Z + "#page=43" }, { v: "Številske vrste", href: V("vaje9") }],
-  limita:    [{ z: "7.1 Limita funkcije", href: Z + "#page=55" }, { v: "Limite in zveznost", href: V("vaje11") }],
-  zveznost:  [{ z: "7.4 Zveznost", href: Z + "#page=60" }, { v: "Limite in zveznost", href: V("vaje11") }],
-  odvod:     [{ z: "8. Odvod", href: Z + "#page=67" }, { v: "Odvod", href: V("vaje12") }],
-  uporaba:   [{ z: "8.6 Ekstremi", href: Z + "#page=75" }, { z: "8.9 Risanje grafov", href: Z + "#page=83" }, { v: "Odvod", href: V("vaje12") }],
-  integral:  [{ z: "9. Nedoločeni integral", href: Z + "#page=86" }, { z: "10. Določeni integral", href: Z + "#page=96" }, { v: "Nedoločeni integral", href: V("vaje13") }, { v: "Določeni integral", href: V("vaje14") }],
-  taylor:    [{ z: "11.4 Taylorjeva vrsta", href: Z + "#page=123" }, { v: "Taylorjeva vrsta", href: V("vaje15") }],
+  mnozice:   [{ z: "1. Množice in izjave"}, { v: "Množice"}, { v: "Logika in izjavni račun"}],
+  indukcija: [{ z: "2.1 Naravna števila"}, { v: "Matematična indukcija"}],
+  absolutna: [{ z: "2.4 Realna števila"}, { v: "Števila (absolutna vrednost)"}, { v: "Ponavljanje"}, { v: "Ponavljanje (krajše)"}],
+  supinf:    [{ z: "2.4 Realna števila"}, { v: "Števila (sup, inf)"}],
+  kompleksna:[{ z: "2.5 Kompleksna števila"}, { v: "Kompleksna števila"}],
+  funkcije:  [{ z: "3. Preslikave"}, { z: "6. Realne funkcije"}, { v: "Funkcije"}, { v: "Elementarne funkcije"}],
+  zaporedja: [{ z: "4. Zaporedja"}, { v: "Zaporedja"}, { v: "Zaporedja, dodatno"}],
+  vrste:     [{ z: "5. Številske vrste"}, { v: "Številske vrste"}],
+  limita:    [{ z: "7.1 Limita funkcije"}, { v: "Limite in zveznost"}],
+  zveznost:  [{ z: "7.4 Zveznost"}, { v: "Limite in zveznost"}],
+  odvod:     [{ z: "8. Odvod"}, { v: "Odvod"}],
+  uporaba:   [{ z: "8.6 Ekstremi"}, { z: "8.9 Risanje grafov"}, { v: "Odvod"}],
+  integral:  [{ z: "9. Nedoločeni integral"}, { z: "10. Določeni integral"}, { v: "Nedoločeni integral"}, { v: "Določeni integral"}],
+  taylor:    [{ z: "11.4 Taylorjeva vrsta"}, { v: "Taylorjeva vrsta"}],
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -90,8 +88,8 @@ const GRADIVO = {
 //  Oznake nalog: CP-CH2/P24 = poglavje 2, problem 24 · CP/E2.5 = primer 2.5
 // ─────────────────────────────────────────────────────────────
 PAPERS.push(
-  { id: "f-v-1006", s: "fiz", k: 0, label: "Vaje", year: "6. okt", pdf: "gradivo/fizika1/vaje/2026-10-06.pdf", tasks: [["kinematika"], ["kinematika"], ["kinematika"]] },
-  { id: "f-v-1008", s: "fiz", k: 0, label: "Vaje", year: "8. okt", pdf: "gradivo/fizika1/vaje/2026-10-08.pdf", tasks: [["kinematika"], ["kinematika"], ["uvod"]] },
+  { id: "f-v-1006", s: "fiz", k: 0, label: "Vaje", year: "6. okt", tasks: [["kinematika"], ["kinematika"], ["kinematika"]] },
+  { id: "f-v-1008", s: "fiz", k: 0, label: "Vaje", year: "8. okt", tasks: [["kinematika"], ["kinematika"], ["uvod"]] },
 );
 
 const tbl = rows => `<table class="dt"><tr><th>čas (s)</th><th>lega (m)</th></tr>${rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("")}</table>`;
@@ -107,7 +105,7 @@ PROBLEMS.push(
 
 // knjiga: poglavje za vsako temo fizike + zapiski in vaje
 Object.assign(GRADIVO, {
-  kinematika: [{ z: "Predavanje: kinematika (tabla)", href: "gradivo/fizika1/predavanja/kinematika.pdf" },
-               { v: "Vaje 6. okt", href: "gradivo/fizika1/vaje/2026-10-06.pdf" }, { v: "Vaje 8. okt", href: "gradivo/fizika1/vaje/2026-10-08.pdf" }],
-  uvod:       [{ v: "Vaje 8. okt", href: "gradivo/fizika1/vaje/2026-10-08.pdf" }],
+  kinematika: [{ z: "Predavanje: kinematika (tabla)"},
+               { v: "Vaje 6. okt"}, { v: "Vaje 8. okt"}],
+  uvod:       [{ v: "Vaje 8. okt"}],
 });
