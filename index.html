@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>snou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0e12;
+    --panel: #15171d;
+    --line: #262932;
+    --text: #e9e7e1;
+    --muted: #8b8d96;
+    --faint: #4a4d57;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body { font: 14px/1.5 Inter, system-ui, sans-serif; padding: 28px 32px 60px; max-width: 1500px; margin: 0 auto; }
+  h1 { font: italic 400 46px/1 "Instrument Serif", serif; margin: 0; letter-spacing: -0.5px; }
+  h2 { font: 400 26px/1.1 "Instrument Serif", serif; margin: 0 0 4px; }
+  .muted { color: var(--muted); }
+  header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 18px; }
+
+  /* kolokviji */
+  .exams { display: flex; gap: 10px; flex-wrap: wrap; }
+  .exam { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-width: 150px; background: var(--panel); }
+  .exam .n { font: 400 28px/1 "Instrument Serif", serif; }
+  .exam .l { font-size: 12px; color: var(--muted); }
+  .exam .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .exam.soon { border-color: #e8665a; }
+
+  /* legenda */
+  .legend { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .chip { cursor: pointer; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px 4px 10px; font-size: 13px; background: transparent; color: var(--text); font-family: inherit; display: flex; align-items: center; gap: 7px; }
+  .chip .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .chip.off { opacity: .35; }
+  .chip .pct { color: var(--muted); font-size: 12px; }
+
+  /* diagram */
+  .stage { position: relative; overflow-x: auto; }
+  svg { display: block; width: 100%; min-width: 1000px; height: auto; }
+  .arc { fill: none; stroke-width: 1.6; opacity: .55; transition: opacity .15s, stroke-width .15s; }
+  .dim .arc { opacity: .06; }
+  .dim .arc.on { opacity: 1; stroke-width: 2.6; }
+  .arc-hit { fill: none; stroke: transparent; stroke-width: 10; cursor: help; }
+  .bar { cursor: pointer; }
+  .label { font-size: 11.5px; fill: var(--muted); cursor: pointer; }
+  .label.on { fill: var(--text); font-weight: 600; }
+  .dim .label:not(.on) { opacity: .35; }
+  .sublabel { font: italic 17px "Instrument Serif", serif; }
+  .tip { position: absolute; pointer-events: none; background: #000c; border: 1px solid var(--line); padding: 6px 10px; border-radius: 8px; font-size: 12.5px; opacity: 0; transition: opacity .1s; max-width: 280px; }
+
+  /* spodnji del */
+  .below { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-top: 18px; }
+  @media (max-width: 900px) { .below { grid-template-columns: 1fr; } body { padding: 20px 16px 40px; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+  .empty { color: var(--muted); font-style: italic; }
+  .status { display: flex; gap: 6px; margin: 12px 0 14px; }
+  .status button { flex: 1; font-family: inherit; font-size: 13px; padding: 8px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
+  .status button.sel { color: #111; font-weight: 600; }
+  .conns { list-style: none; padding: 0; margin: 0; }
+  .conns li { padding: 7px 0; border-top: 1px solid var(--line); cursor: pointer; display: flex; gap: 10px; align-items: baseline; }
+  .conns li:hover .nm { text-decoration: underline; }
+  .conns .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; transform: translateY(-1px); }
+  .conns .why { color: var(--muted); font-size: 12.5px; }
+  textarea { width: 100%; min-height: 90px; resize: vertical; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px; font: 13.5px/1.5 Inter, sans-serif; }
+  .sec { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 16px 0 6px; }
+  .prog { margin: 10px 0; }
+  .prog .row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .prog .track { height: 8px; border-radius: 4px; background: var(--line); display: flex; overflow: hidden; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>snou</h1>
+    <div class="muted">Vse teme, vsi predmeti, vse povezave.</div>
+  </div>
+  <div class="exams" id="exams"></div>
+</header>
+
+<div class="legend" id="legend"></div>
+
+<div class="stage" id="stage">
+  <svg id="svg"></svg>
+  <div class="tip" id="tip"></div>
+</div>
+
+<div class="below">
+  <div class="card" id="detail"><div class="empty">Klikni na temo, da vidiš njene povezave.</div></div>
+  <div class="card">
+    <h2>Napredek</h2>
+    <div class="muted" style="font-size:13px">ne znam · vadim · znam</div>
+    <div id="progress"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const subj = Object.fromEntries(SUBJECTS.map(s => [s.id, s]));
+const topic = Object.fromEntries(TOPICS.map(t => [t.id, t]));
+const STATUS = ["ne znam", "vadim", "znam"];
+const STATUS_OP = [0.3, 0.65, 1];
+
+// ── shramba (lokalno v brskalniku) ──
+const load = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+let status = load("snou-status");
+let notes = load("snou-notes");
+
+let selected = null, hovered = null;
+let hidden = new Set();
+
+// ── kolokviji ──
+function renderExams() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const next = SUBJECTS.flatMap(s => {
+    const d = s.exams.map(x => new Date(x + "T00:00")).filter(d => d >= today).sort((a,b) => a-b)[0];
+    return d ? [{ s, d, days: Math.round((d - today) / 864e5) }] : [];
+  }).sort((a,b) => a.days - b.days);
+  $("#exams").innerHTML = next.map(({s, d, days}) => `
+    <div class="exam ${days <= 14 ? "soon" : ""}">
+      <div class="n">${days === 0 ? "danes" : days + " dni"}</div>
+      <div class="l"><span class="dot" style="background:${s.color}"></span>${s.name} · ${d.toLocaleDateString("sl-SI", {day:"numeric", month:"short"})}</div>
+    </div>`).join("");
+}
+
+// ── postavitev ──
+const W = 1400, PAD = 30, BASE = 420, BAR = 16;
+const pos = {};
+(function layout() {
+  const gap = 1.6;
+  const units = TOPICS.length + gap * (SUBJECTS.length - 1);
+  const step = (W - PAD * 2) / (units - 1);
+  let u = 0;
+  SUBJECTS.forEach((s, i) => {
+    if (i) u += gap;
+    TOPICS.filter(t => t.s === s.id).forEach(t => { pos[t.id] = PAD + u * step; u++; });
+  });
+})();
+
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+function renderDiagram() {
+  const svg = $("#svg");
+  svg.innerHTML = "";
+  let maxRy = 0;
+  const defs = el("defs", {}, svg);
+
+  // prelivi med barvami predmetov
+  const grad = (a, b) => {
+    const id = `g-${a}-${b}`;
+    if (!svg.querySelector("#" + id)) {
+      const g = el("linearGradient", { id }, defs);
+      el("stop", { offset: "0%", "stop-color": subj[a].color }, g);
+      el("stop", { offset: "100%", "stop-color": subj[b].color }, g);
+    }
+    return `url(#${id})`;
+  };
+
+  const gArcs = el("g", {}, svg);
+  const gHits = el("g", {}, svg);
+  LINKS.forEach(([a, b, why], i) => {
+    if (!topic[a] || !topic[b]) return;
+    let [l, r] = pos[a] < pos[b] ? [a, b] : [b, a];
+    const rx = (pos[r] - pos[l]) / 2, ry = Math.min(rx * 0.62, BASE - 20);
+    maxRy = Math.max(maxRy, ry);
+    const d = `M ${pos[l]} ${BASE} A ${rx} ${ry} 0 0 1 ${pos[r]} ${BASE}`;
+    const sl = topic[l].s, sr = topic[r].s;
+    const arc = el("path", { d, class: "arc", stroke: sl === sr ? subj[sl].color : grad(sl, sr) }, gArcs);
+    arc.dataset.a = a; arc.dataset.b = b;
+    const hit = el("path", { d, class: "arc-hit" }, gHits);
+    hit.addEventListener("mousemove", e => showTip(e, `<b>${topic[a].name}</b> ↔ <b>${topic[b].name}</b>${why ? "<br>" + why : ""}`));
+    hit.addEventListener("mouseleave", hideTip);
+    hit.addEventListener("click", () => select(a));
+  });
+
+  // osnovna črta in imena predmetov
+  SUBJECTS.forEach(s => {
+    const xs = TOPICS.filter(t => t.s === s.id).map(t => pos[t.id]);
+    if (!xs.length) return;
+    el("line", { x1: Math.min(...xs) - 6, x2: Math.max(...xs) + 6, y1: BASE + BAR + 4, y2: BASE + BAR + 4, stroke: s.color, "stroke-width": 2 }, svg);
+  });
+
+  // teme
+  TOPICS.forEach(t => {
+    const x = pos[t.id], s = subj[t.s], st = status[t.id] ?? 0;
+    const g = el("g", { class: "bar" }, svg);
+    el("rect", { x: x - 5, y: BASE, width: 10, height: BAR, rx: 2, fill: s.color, "fill-opacity": STATUS_OP[st] }, g);
+    const lab = el("text", { class: "label", x: x + 4, y: BASE + BAR + 16, transform: `rotate(55 ${x + 4} ${BASE + BAR + 16})` }, g);
+    lab.textContent = t.name;
+    lab.dataset.id = t.id;
+    g.addEventListener("mouseenter", () => { hovered = t.id; highlight(); });
+    g.addEventListener("mouseleave", () => { hovered = null; highlight(); });
+    g.addEventListener("click", () => select(t.id));
+  });
+
+  const top = BASE - maxRy - 16;
+  svg.setAttribute("viewBox", `0 ${top} ${W + 60} ${BASE + 175 - top}`);
+  highlight();
+}
+
+function highlight() {
+  const svg = $("#svg");
+  const focus = hovered || selected;
+  const active = new Set();
+  if (focus) {
+    active.add(focus);
+    LINKS.forEach(([a, b]) => { if (a === focus) active.add(b); if (b === focus) active.add(a); });
+  }
+  const filtering = hidden.size > 0;
+  svg.classList.toggle("dim", !!focus || filtering);
+  svg.querySelectorAll(".arc").forEach(p => {
+    const {a, b} = p.dataset;
+    const visible = !hidden.has(topic[a].s) || !hidden.has(topic[b].s);
+    const on = focus ? (a === focus || b === focus) : visible;
+    p.classList.toggle("on", on && (!filtering || visible));
+  });
+  svg.querySelectorAll(".label").forEach(l => {
+    const id = l.dataset.id;
+    l.classList.toggle("on", focus ? active.has(id) : (filtering && !hidden.has(topic[id].s)));
+  });
+}
+
+// ── izbrana tema ──
+function select(id) {
+  selected = selected === id ? null : id;
+  highlight();
+  renderDetail();
+}
+
+function renderDetail() {
+  const box = $("#detail");
+  if (!selected) { box.innerHTML = `<div class="empty">Klikni na temo, da vidiš njene povezave.</div>`; return; }
+  const t = topic[selected], s = subj[t.s], st = status[t.id] ?? 0;
+  const conns = LINKS.filter(([a, b]) => a === t.id || b === t.id)
+    .map(([a, b, why]) => ({ o: topic[a === t.id ? b : a], why }))
+    .sort((x, y) => x.o.s.localeCompare(y.o.s));
+  box.innerHTML = `
+    <div style="font-size:12px;color:${s.color}">${s.name}</div>
+    <h2>${t.name}</h2>
+    <div class="muted">${t.note || ""}</div>
+    <div class="status">${STATUS.map((n, i) =>
+      `<button data-i="${i}" class="${i === st ? "sel" : ""}" style="${i === st ? `background:${s.color};border-color:${s.color}` : ""}">${n}</button>`).join("")}
+    </div>
+    <div class="sec">Povezave · ${conns.length}</div>
+    <ul class="conns">${conns.map(({o, why}) => `
+      <li data-id="${o.id}"><span class="dot" style="background:${subj[o.s].color}"></span>
+        <span><span class="nm">${o.name}</span>${why ? `<br><span class="why">${why}</span>` : ""}</span></li>`).join("")}
+    </ul>
+    <div class="sec">Moji zapiski</div>
+    <textarea id="note" placeholder="Formule, kje se zatika, katere naloge vaditi …">${notes[t.id] || ""}</textarea>`;
+  box.querySelectorAll(".status button").forEach(b => b.onclick = () => {
+    status[t.id] = +b.dataset.i; save("snou-status", status);
+    renderDiagram(); renderDetail(); renderProgress(); renderLegend();
+  });
+  box.querySelectorAll(".conns li").forEach(li => li.onclick = () => { selected = null; select(li.dataset.id); });
+  $("#note").oninput = e => { notes[t.id] = e.target.value; save("snou-notes", notes); };
+}
+
+// ── napredek in legenda ──
+function counts(sid) {
+  const ts = TOPICS.filter(t => t.s === sid), c = [0, 0, 0];
+  ts.forEach(t => c[status[t.id] ?? 0]++);
+  return { c, n: ts.length };
+}
+
+function renderProgress() {
+  $("#progress").innerHTML = SUBJECTS.map(s => {
+    const { c, n } = counts(s.id);
+    return `<div class="prog">
+      <div class="row"><span>${s.name}</span><span class="muted">${c[2]}/${n}</span></div>
+      <div class="track">
+        <div style="width:${c[2]/n*100}%;background:${s.color}"></div>
+        <div style="width:${c[1]/n*100}%;background:${s.color};opacity:.45"></div>
+      </div></div>`;
+  }).join("");
+}
+
+function renderLegend() {
+  $("#legend").innerHTML = SUBJECTS.map(s => {
+    const { c, n } = counts(s.id);
+    return `<button class="chip ${hidden.has(s.id) ? "off" : ""}" data-id="${s.id}">
+      <span class="dot" style="background:${s.color}"></span>${s.name}<span class="pct">${Math.round(c[2]/n*100)}%</span></button>`;
+  }).join("");
+  $("#legend").querySelectorAll(".chip").forEach(b => b.onclick = () => {
+    hidden.has(b.dataset.id) ? hidden.delete(b.dataset.id) : hidden.add(b.dataset.id);
+    if (hidden.size === SUBJECTS.length) hidden.clear();
+    renderLegend(); highlight();
+  });
+}
+
+// ── namig ──
+function showTip(e, html) {
+  const tip = $("#tip"), r = $("#stage").getBoundingClientRect();
+  tip.innerHTML = html; tip.style.opacity = 1;
+  tip.style.left = (e.clientX - r.left + $("#stage").scrollLeft + 12) + "px";
+  tip.style.top = (e.clientY - r.top + 12) + "px";
+}
+function hideTip() { $("#tip").style.opacity = 0; }
+
+renderExams(); renderLegend(); renderDiagram(); renderProgress();
+</script>
+</body>
+</html>
