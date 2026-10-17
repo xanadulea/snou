@@ -17,19 +17,21 @@ const SUBJECTS = [
 ];
 
 const TOPICS = [
-  // Matematika 1
-  { id: "mnozice",   s: "mat", name: "Množice in izjave",       note: "Logični vezniki, kvantifikatorji, operacije z množicami." },
-  { id: "indukcija", s: "mat", name: "Naravna števila, indukcija", note: "Dokaz z matematično indukcijo." },
-  { id: "realna",    s: "mat", name: "Realna števila",          note: "Supremum, infimum, absolutna vrednost, neenačbe." },
-  { id: "kompleksna",s: "mat", name: "Kompleksna števila",      note: "Algebraična in polarna oblika, Eulerjeva formula." },
-  { id: "zaporedja", s: "mat", name: "Zaporedja",               note: "Konvergenca, monotonost, omejenost." },
-  { id: "vrste",     s: "mat", name: "Vrste",                   note: "Geometrijska vrsta, kriteriji konvergence." },
-  { id: "limita",    s: "mat", name: "Limita funkcije",         note: "Limita v točki, enostranske limite." },
-  { id: "zveznost",  s: "mat", name: "Zveznost",                note: "Zvezne funkcije, izrek o vmesni vrednosti." },
-  { id: "odvod",     s: "mat", name: "Odvod",                   note: "Definicija, pravila odvajanja, verižno pravilo." },
-  { id: "uporaba",   s: "mat", name: "Uporaba odvoda",          note: "Ekstremi, L'Hôpital, potek funkcije." },
-  { id: "taylor",    s: "mat", name: "Taylorjeva vrsta",        note: "Aproksimacija funkcije s polinomom." },
-  { id: "integral",  s: "mat", name: "Integral",                note: "Nedoločeni in določeni integral, ploščina." },
+  // Matematika 1 — k = na katerem kolokviju pride (glej pretekle kolokvije)
+  { id: "mnozice",   s: "mat", k: [1], name: "Množice in izjave",       note: "Logični vezniki, kvantifikatorji, operacije z množicami." },
+  { id: "indukcija", s: "mat", k: [1], name: "Matematična indukcija",   note: "Deljivost, vsote, neenakosti. Vsak 1. kolokvij, 1. naloga." },
+  { id: "absolutna", s: "mat", k: [1], name: "Absolutna vrednost, neenačbe", note: "Enačbe in neenačbe z |…|, razbijanje na primere." },
+  { id: "supinf",    s: "mat", k: [1], name: "Supremum in infimum",     note: "min, max, inf, sup množice {a_n ; n ∈ ℕ}." },
+  { id: "kompleksna",s: "mat", k: [1], name: "Kompleksna števila",      note: "Enačbe z z, z̄, |z|; korenjenje zⁿ = w in risanje rešitev." },
+  { id: "funkcije",  s: "mat", k: [1, 2], name: "Funkcije: DO, ZV, inverz", note: "Naravno definicijsko območje, zaloga vrednosti, inverz, kompozitum." },
+  { id: "zaporedja", s: "mat", k: [2], name: "Zaporedja",               note: "Limite, rekurzivna zaporedja, stekališča." },
+  { id: "vrste",     s: "mat", k: [2], name: "Vrste",                   note: "Kriteriji konvergence, absolutna/pogojna, seštevanje vrst." },
+  { id: "limita",    s: "mat", k: [3], name: "Limita funkcije",         note: "Limite funkcij, asimptote." },
+  { id: "zveznost",  s: "mat", k: [3], name: "Zveznost",                note: "Zveznost in odvedljivost v točki, parametri a, b." },
+  { id: "odvod",     s: "mat", k: [3], name: "Odvod",                   note: "Pravila odvajanja, tangenta, implicitno odvajanje." },
+  { id: "uporaba",   s: "mat", k: [3], name: "Uporaba odvoda",          note: "Ekstremi, optimizacija, L'Hôpital, potek funkcije." },
+  { id: "taylor",    s: "mat", k: [4], name: "Taylorjeva vrsta",        note: "Razvoj v vrsto, limite s Taylorjem." },
+  { id: "integral",  s: "mat", k: [4], name: "Integral",                note: "Nedoločeni, določeni, posplošeni integral, ploščina." },
 
   // Linearna algebra
   { id: "vektorji",  s: "la", name: "Vektorji v R³",            note: "Seštevanje, množenje s skalarjem, koordinate." },
@@ -72,7 +74,11 @@ const TOPICS = [
 const LINKS = [
   // znotraj matematike
   ["mnozice", "indukcija", "Logika je osnova dokazov"],
-  ["realna", "zaporedja", "Supremum ↔ konvergenca monotonih zaporedij"],
+  ["supinf", "zaporedja", "Supremum ↔ konvergenca monotonih zaporedij"],
+  ["mnozice", "supinf", "Supremum je lastnost množice"],
+  ["absolutna", "supinf", "Ocene z neenačbami"],
+  ["indukcija", "zaporedja", "Omejenost rekurzivnega zaporedja dokažeš z indukcijo"],
+  ["funkcije", "limita", "Limita na robu definicijskega območja"],
   ["zaporedja", "vrste", "Vrsta je zaporedje delnih vsot"],
   ["zaporedja", "limita", "Limita funkcije prek zaporedij"],
   ["limita", "zveznost", "Zveznost = limita je enaka vrednosti"],

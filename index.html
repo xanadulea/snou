@@ -123,6 +123,20 @@
   .help li { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; font-size: 13.5px; }
   .help .why { color: var(--muted); font-size: 12.5px; }
   .ring { pointer-events: none; animation: pulse 2.4s ease-in-out infinite; }
+  /* pretekli kolokviji */
+  .papers { margin-top: 14px; }
+  .papers .hm { overflow-x: auto; margin-top: 10px; }
+  .papers svg { display: block; width: 100%; min-width: 760px; height: auto; }
+  .prow { cursor: pointer; }
+  .prow:hover rect.bg { fill: var(--line); }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .86em; line-height: 1.15; margin: 0 2px; }
+  .fr > span:first-child { border-bottom: 1px solid currentColor; padding: 0 3px; }
+  .probs { list-style: none; padding: 0; margin: 0; }
+  .probs li { border-top: 1px solid var(--line); padding: 10px 0; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+  .probs .src { font-size: 11.5px; color: var(--muted); margin-bottom: 3px; }
+  .probs .tx { font-size: 14px; line-height: 1.75; }
+  .probs button { font: 12px Inter, sans-serif; border-radius: 999px; padding: 4px 10px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; }
+  .probs button.ok { background: var(--c); border-color: var(--c); color: #111; font-weight: 600; }
   @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 </style>
 </head>
@@ -146,6 +160,12 @@
 <div class="stage" id="stage">
   <svg id="svg"></svg>
   <div class="tip" id="tip"></div>
+</div>
+
+<div class="card papers">
+  <h2>Pretekli kolokviji · Matematika 1</h2>
+  <div class="muted" style="font-size:13px">Vsaka pika je naloga. Obroč = naloga je prepisana in jo lahko rešiš · polna pika = rešila si jo.</div>
+  <div class="hm" id="papers"></div>
 </div>
 
 <div class="below">
@@ -176,6 +196,7 @@
 <script src="data.js"></script>
 <script src="deep.js"></script>
 <script src="log.js"></script>
+<script src="naloge.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const NS = "http://www.w3.org/2000/svg";
@@ -200,6 +221,8 @@ function computeStatus() {
 }
 let status = computeStatus();
 let notes = load("snou-notes");
+let solved = load("snou-solved");
+const pkey = p => `${p.paper}-${p.n}`;
 
 let selected = null, hovered = null;
 let hidden = new Set();
@@ -327,7 +350,7 @@ function highlight() {
 // ── izbrana tema ──
 function select(id) {
   selected = selected === id ? null : id;
-  highlight();
+  highlight(); renderPapers();
   renderDetail();
 }
 
@@ -362,6 +385,12 @@ function renderDetail() {
     <ul class="help">${sp.map(({o, why, v}) => `<li><span class="dot" style="background:${subj[o.s].color};width:8px;height:8px;border-radius:50%;flex:none;display:inline-block"></span>
       <span><b>${o.name}</b> <span class="muted">· ${STATUS[v]}</span>${why ? `<br><span class="why">${why}</span>` : ""}</span></li>`).join("")}</ul>` : ""; })()}
     ${deepHtml(t, s)}
+    ${(() => { const ps = PROBLEMS.filter(p => p.t === t.id); if (!ps.length) return "";
+      const done = ps.filter(p => solved[pkey(p)]).length;
+      return `<div class="sec">Iz preteklih kolokvijev · rešenih ${done}/${ps.length}</div>
+      <ul class="probs" style="--c:${s.color}">${ps.map(p => { const pa = PAPERS.find(x => x.id === p.paper);
+        return `<li><div><div class="src">${pa.label} · ${pa.year} · ${p.n}. naloga</div><div class="tx">${p.text}</div></div>
+        <button data-k="${pkey(p)}" class="${solved[pkey(p)] ? "ok" : ""}">${solved[pkey(p)] ? "rešila ✓" : "rešila?"}</button></li>`; }).join("")}</ul>`; })()}
     <div class="sec">Povezave · ${conns.length}</div>
     <ul class="conns">${conns.map(({o, why}) => `
       <li data-id="${o.id}"><span class="dot" style="background:${subj[o.s].color}"></span>
@@ -373,6 +402,10 @@ function renderDetail() {
     localStatus[t.id] = { v: +b.dataset.i, at: TODAY_ISO }; save("snou-status2", localStatus);
     status = computeStatus();
     renderDiagram(); renderDetail(); renderProgress(); renderLegend(); renderPlan(); renderXfer();
+  });
+  box.querySelectorAll(".probs button").forEach(b => b.onclick = () => {
+    solved[b.dataset.k] ? delete solved[b.dataset.k] : (solved[b.dataset.k] = TODAY_ISO);
+    save("snou-solved", solved); renderDetail(); renderPapers();
   });
   box.querySelectorAll(".conns li").forEach(li => li.onclick = () => { selected = null; select(li.dataset.id); });
   $("#note").oninput = e => { notes[t.id] = e.target.value; save("snou-notes", notes); };
@@ -470,6 +503,55 @@ function renderDayLog() {
 }
 
 // ── načrt ──
+// ── pretekli kolokviji ──
+function renderPapers() {
+  const sid = "mat", s = subj[sid];
+  const rows = TOPICS.filter(t => t.s === sid);
+  const papers = PAPERS.filter(p => p.s === sid);
+  const LW = 200, CW = 34, RH = 24, TOP = 44, GAP = 16;
+  let x = LW, xs = {}, groups = [], last = null;
+  papers.forEach(p => {
+    if (last !== null && p.k !== last) x += GAP;
+    if (p.k !== last) groups.push({ label: p.label, x0: x, k: p.k });
+    xs[p.id] = x + CW / 2; x += CW; last = p.k;
+    groups[groups.length - 1].x1 = x;
+  });
+  const W2 = x + 60, H2 = TOP + rows.length * RH + 6;
+  const nextIdx = s.exams.findIndex(e => e >= TODAY_ISO) + 1;
+  let h = "";
+  groups.forEach(g => {
+    const isNext = g.k === nextIdx;
+    h += `<text x="${(g.x0 + g.x1) / 2}" y="14" text-anchor="middle" font-size="13" fill="${isNext ? s.color : "var(--muted)"}" font-weight="${isNext ? 600 : 400}">${g.label}${isNext ? " · " + fmt(new Date(s.exams[g.k - 1] + "T00:00"), {day: "numeric", month: "short"}) : ""}</text>`;
+    h += `<line x1="${g.x0 + 4}" x2="${g.x1 - 4}" y1="21" y2="21" stroke="${isNext ? s.color : "var(--line)"}" stroke-width="1.5"/>`;
+  });
+  papers.forEach(p => h += `<text x="${xs[p.id]}" y="36" text-anchor="middle" font-size="9.5" fill="var(--faint)">${p.year.replace(/^20(\d\d)\/\d\d$/, "’$1").replace("avg 2026", "avg").replace("sep 2026", "sep")}</text>`);
+  rows.forEach((t, i) => {
+    const y = TOP + i * RH, cy = y + RH / 2;
+    let row = `<rect class="bg" x="0" y="${y}" width="${W2}" height="${RH}" rx="4" fill="transparent"/>`;
+    row += `<text x="${LW - 12}" y="${cy + 4}" text-anchor="end" font-size="12.5" fill="${selected === t.id ? "var(--text)" : "var(--muted)"}" font-weight="${selected === t.id ? 600 : 400}">${t.name}</text>`;
+    let count = 0;
+    papers.forEach(p => {
+      p.tasks.forEach((tt, ti) => {
+        if (!tt.includes(t.id)) return;
+        count++;
+        const pr = PROBLEMS.find(q => q.paper === p.id && q.n === ti + 1 && q.t === t.id);
+        const n = p.tasks.slice(0, ti).filter(z => z.includes(t.id)).length;   // več nalog iste teme
+        const cx = xs[p.id] + n * 7 - (p.tasks.filter(z => z.includes(t.id)).length - 1) * 3.5;
+        if (pr && solved[pkey(pr)]) row += `<circle cx="${cx}" cy="${cy}" r="6" fill="${s.color}" style="filter:drop-shadow(0 0 4px ${s.color})"/>`;
+        else if (pr) row += `<circle cx="${cx}" cy="${cy}" r="5.5" fill="none" stroke="${s.color}" stroke-width="1.8"/>`;
+        else row += `<circle cx="${cx}" cy="${cy}" r="4.5" fill="${s.color}" fill-opacity=".45"/>`;
+      });
+    });
+    row += `<text x="${x + 14}" y="${cy + 4}" font-size="12" fill="${count ? "var(--text)" : "var(--faint)"}">${count ? "×" + count : "–"}</text>`;
+    h += `<g class="prow" data-id="${t.id}">${row}</g>`;
+  });
+  $("#papers").innerHTML = `<svg viewBox="0 0 ${W2} ${H2}">${h}</svg>`;
+  $("#papers").querySelectorAll(".prow").forEach(g => g.onclick = () => {
+    selected = null; select(g.dataset.id);
+    $("#detail").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
 // ── prenos znanja ──
 // Teme iz DRUGIH predmetov, ki jih že vadiš ali znaš in so povezane s to temo.
 function support(id) {
@@ -505,7 +587,9 @@ function renderXfer() {
 function renderPlan() {
   const rows = SUBJECTS.map(s => {
     const next = s.exams.filter(e => e >= TODAY_ISO).sort()[0];
-    const left = TOPICS.filter(t => t.s === s.id && (status[t.id] ?? 0) < 2)
+    const k = s.exams.filter(e => e < TODAY_ISO).length + 1;
+    const tagged = TOPICS.some(t => t.s === s.id && t.k);
+    const left = TOPICS.filter(t => t.s === s.id && (status[t.id] ?? 0) < 2 && (!tagged || (t.k || []).includes(k)))
       .map((t, i) => ({ t, i, r: ready(t.id) ? 1 : 0 }))
       .sort((a, b) => b.r - a.r || a.i - b.i).map(x => x.t);
     const days = next ? Math.round((new Date(next + "T00:00") - TODAY) / 864e5) : null;
@@ -517,7 +601,7 @@ function renderPlan() {
     return `<div class="p" style="--c:${s.color}">
       <div class="top"><span class="nm"><span class="dot" style="background:${s.color}"></span>${s.name}</span>
         <span class="when">${days} dni</span></div>
-      <div class="pace">${left.length ? `${left.length} tem še ni »znam« · ≈ ${pace} na teden do ${fmt(new Date(next + "T00:00"), {day: "numeric", month: "short"})}` : "Vse teme znaš. Ponavljaj."}</div>
+      <div class="pace">${left.length ? `${left.length} tem${TOPICS.some(t => t.s === s.id && t.k) ? " za ta kolokvij" : ""} še ni »znam« · ≈ ${pace} na teden do ${fmt(new Date(next + "T00:00"), {day: "numeric", month: "short"})}` : "Vse teme znaš. Ponavljaj."}</div>
       <div class="next">${left.slice(0, 3).map(t => `<button data-id="${t.id}" class="${ready(t.id) ? "ready" : ""}" title="${ready(t.id) ? "Del že znaš iz drugega predmeta" : ""}">${t.name}</button>`).join("")}</div>
     </div>`;
   }).join("");
@@ -536,7 +620,7 @@ function renderTasks() {
   }).join("")}</ul>` : `<div class="muted" style="font-size:13px;margin-top:6px">Še ni rokov. Pošlji mi datume poročil in nalog.</div>`;
 }
 
-renderExams(); renderHeatmap(); renderLegend(); renderDiagram(); renderProgress(); renderPlan(); renderXfer(); renderTasks();
+renderExams(); renderHeatmap(); renderLegend(); renderDiagram(); renderProgress(); renderPlan(); renderXfer(); renderTasks(); renderPapers();
 </script>
 </body>
 </html>
