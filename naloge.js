@@ -84,3 +84,30 @@ const GRADIVO = {
   integral:  [{ z: "9. Nedoločeni integral", href: Z + "#page=86" }, { z: "10. Določeni integral", href: Z + "#page=96" }, { v: "Nedoločeni integral", href: V("vaje13") }, { v: "Določeni integral", href: V("vaje14") }],
   taylor:    [{ z: "11.4 Taylorjeva vrsta", href: Z + "#page=123" }, { v: "Taylorjeva vrsta", href: V("vaje15") }],
 };
+
+// ─────────────────────────────────────────────────────────────
+//  FIZIKA 1 — knjiga: Etkina, Planinšič, Van Heuvelen, College Physics: Explore and Apply (2. izd.)
+//  Oznake nalog: CP-CH2/P24 = poglavje 2, problem 24 · CP/E2.5 = primer 2.5
+// ─────────────────────────────────────────────────────────────
+PAPERS.push(
+  { id: "f-v-1006", s: "fiz", k: 0, label: "Vaje", year: "6. okt", pdf: "gradivo/fizika1/vaje/2026-10-06.pdf", tasks: [["kinematika"], ["kinematika"], ["kinematika"]] },
+  { id: "f-v-1008", s: "fiz", k: 0, label: "Vaje", year: "8. okt", pdf: "gradivo/fizika1/vaje/2026-10-08.pdf", tasks: [["kinematika"], ["kinematika"], ["uvod"]] },
+);
+
+const tbl = rows => `<table class="dt"><tr><th>čas (s)</th><th>lega (m)</th></tr>${rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("")}</table>`;
+
+PROBLEMS.push(
+  { paper: "f-v-1006", n: 1, t: "kinematika", code: "CP-CH2/P24", text: `Tabela prikazuje podatke o položaju in času vašega sprehoda po ravni poti.${tbl([[0, 80], [10, 40], [20, 0], [30, -40], [40, -80], [50, -120]])}(a) Povejte vse, kar lahko o sprehodu. Določite koordinatni sistem.<br>(b) Narišite diagram gibanja, narišite graf x(t) in zapišite funkcijo x(t), ki je skladna s podatki in izbranim koordinatnim sistemom.` },
+  { paper: "f-v-1006", n: 2, t: "kinematika", code: "CP-CH2/P33", text: `Graf predstavlja štiri različna gibanja <i>(graf je v PDF)</i>.<br>(a) Zapišite funkcijo x(t) za vsako gibanje.<br>(b) Uporabite informacije z grafa, da določite čim več količin, povezanih z gibanjem predmetov.<br>(c) Z dvema prijateljema uprizorite ta gibanja. <i>Namig: pomislite, kaj je vsak predmet počel pri t = 0.</i>` },
+  { paper: "f-v-1006", n: 3, t: "kinematika", text: `Ana in Bojan se igrata z avtomobilčkoma, ki se gibljeta s konstantno hitrostjo: Anin s hitrostjo 0,6 m/s, Bojanov s 0,4 m/s. Sta vsak na svojem koncu sobe, med sabo oddaljena 4 m, ko izpustita avtomobilčka po isti progi tako, da se zaletita. Kje in kdaj bo prišlo do »nesreče«?<br>a) Določi izhodišče koordinatnega sistema in nariši skico.<br>b) Z diagramom gibanja in grafom x(t) predstavi gibanje obeh avtomobilčkov.<br>c) Nalogo reši še računsko.` },
+  { paper: "f-v-1008", n: 1, t: "kinematika", code: "CP/E2.5", text: `Mlajša sestra teče s hitrostjo 2,0 m/s proti blatni luži, ki je 6,0 m pred njo. Ti tečeš s hitrostjo 5,0 m/s, da jo ujameš, preden skoči v blato. Si 10 m za njo. Ali jo bo treba okopati?<br>a) Določi izhodišče koordinatnega sistema in nariši skico.<br>b) Z diagramom gibanja in grafom x(t) predstavi gibanje tebe in tvoje mlajše sestre.<br>c) Nalogo reši še računsko.` },
+  { paper: "f-v-1008", n: 2, t: "kinematika", code: "CP-CH2/P15", text: `Ugrabljena bankirka, ki gleda skozi režo v oknu kombija, šteje svoje srčne utripe in opazi, da dva izvoza avtoceste prevozijo v 80 utripih. Ve, da je razdalja med izvozoma 1,6 km (1 milja).<br>(a) Ocenite hitrost kombija.<br>(b) Izberite in opišite koordinatni sistem ter narišite graf lege v odvisnosti od časa za kombi.` },
+  { paper: "f-v-1008", n: 3, t: "uvod", code: "CP-CH2/P20", text: `Svetloba v vakuumu potuje s hitrostjo 3,0 · 10⁸ m/s. Približna razdalja med Zemljo in Soncem je 150 · 10⁶ km. Koliko časa potrebuje svetloba, da pripotuje od Sonca do Zemlje? Kakšne so meje, znotraj katerih poznate odgovor?` },
+);
+
+// knjiga: poglavje za vsako temo fizike + zapiski in vaje
+Object.assign(GRADIVO, {
+  kinematika: [{ z: "Predavanje: kinematika (tabla)", href: "gradivo/fizika1/predavanja/kinematika.pdf" },
+               { v: "Vaje 6. okt", href: "gradivo/fizika1/vaje/2026-10-06.pdf" }, { v: "Vaje 8. okt", href: "gradivo/fizika1/vaje/2026-10-08.pdf" }],
+  uvod:       [{ v: "Vaje 8. okt", href: "gradivo/fizika1/vaje/2026-10-08.pdf" }],
+});
