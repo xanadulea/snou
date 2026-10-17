@@ -84,6 +84,31 @@
   .defn .math { font: 400 20px/1.3 "Instrument Serif", serif; padding: 4px 0 4px 16px; border-left: 2px solid var(--c); }
   .defn .ex { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-top: 12px; line-height: 1.7; }
   .star { pointer-events: none; }
+  /* dnevi */
+  .days { margin: 0 0 14px; padding: 14px 18px; display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  .days .hm { overflow-x: auto; flex: 1 1 560px; }
+  .days .hm svg { display: block; width: 100%; min-width: 560px; height: auto; }
+  .cell { cursor: pointer; }
+  .daylog { flex: 0 1 300px; min-width: 240px; font-size: 13.5px; }
+  .daylog .d { font: 400 22px/1.1 "Instrument Serif", serif; margin-bottom: 6px; }
+  .daylog ul { list-style: none; padding: 0; margin: 0; }
+  .daylog li { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; }
+  .daylog .dot, .plan .dot, .tasks .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; display: inline-block; }
+  /* načrt */
+  .side { display: flex; flex-direction: column; gap: 18px; }
+  .plan .p { padding: 12px 0; border-top: 1px solid var(--line); }
+  .plan .p:first-of-type { border-top: 0; }
+  .plan .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .plan .nm { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .plan .when { font: 400 19px/1 "Instrument Serif", serif; white-space: nowrap; }
+  .plan .pace { font-size: 12.5px; color: var(--muted); margin: 3px 0 7px; }
+  .plan .next { display: flex; flex-wrap: wrap; gap: 6px; }
+  .plan .next button { font: 12.5px Inter, sans-serif; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+  .plan .next button:first-child { border-color: var(--c); }
+  .tasks li { display: flex; gap: 10px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
+  .tasks ul { list-style: none; padding: 0; margin: 8px 0 0; }
+  .tasks .dt { color: var(--muted); font-size: 12.5px; min-width: 58px; }
+  .tasks .late { color: #e8665a; }
 </style>
 </head>
 <body>
@@ -96,6 +121,11 @@
   <div class="exams" id="exams"></div>
 </header>
 
+<div class="card days">
+  <div class="hm" id="heatmap"></div>
+  <div class="daylog" id="daylog"></div>
+</div>
+
 <div class="legend" id="legend"></div>
 
 <div class="stage" id="stage">
@@ -105,15 +135,27 @@
 
 <div class="below">
   <div class="card" id="detail"><div class="empty">Klikni na temo, da vidiš njene povezave.</div></div>
+  <div class="side">
+  <div class="card plan">
+    <h2>Načrt</h2>
+    <div class="muted" style="font-size:13px">Kaj je naslednje, šteto od kolokvijev nazaj.</div>
+    <div id="plan" style="margin-top:6px"></div>
+  </div>
+  <div class="card tasks">
+    <h2>Roki</h2>
+    <div id="tasks"></div>
+  </div>
   <div class="card">
     <h2>Napredek</h2>
     <div class="muted" style="font-size:13px">ne znam · vadim · znam</div>
     <div id="progress"></div>
   </div>
+  </div>
 </div>
 
 <script src="data.js"></script>
 <script src="deep.js"></script>
+<script src="log.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const NS = "http://www.w3.org/2000/svg";
@@ -125,7 +167,18 @@ const STATUS_OP = [0.3, 0.65, 1];
 // ── shramba (lokalno v brskalniku) ──
 const load = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
-let status = load("snou-status");
+const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+const TODAY_ISO = iso(TODAY);
+let localStatus = load("snou-status2");
+function computeStatus() {
+  const st = {}, at = {};
+  [...LOG].sort((a, b) => a.date.localeCompare(b.date)).forEach(e =>
+    Object.entries(e.status || {}).forEach(([id, v]) => { st[id] = v; at[id] = e.date; }));
+  Object.entries(localStatus).forEach(([id, {v, at: t}]) => { if (!at[id] || t >= at[id]) st[id] = v; });
+  return st;
+}
+let status = computeStatus();
 let notes = load("snou-notes");
 
 let selected = null, hovered = null;
@@ -291,8 +344,9 @@ function renderDetail() {
     <div class="sec">Moji zapiski</div>
     <textarea id="note" placeholder="Formule, kje se zatika, katere naloge vaditi …">${notes[t.id] || ""}</textarea>`;
   box.querySelectorAll(".status button").forEach(b => b.onclick = () => {
-    status[t.id] = +b.dataset.i; save("snou-status", status);
-    renderDiagram(); renderDetail(); renderProgress(); renderLegend();
+    localStatus[t.id] = { v: +b.dataset.i, at: TODAY_ISO }; save("snou-status2", localStatus);
+    status = computeStatus();
+    renderDiagram(); renderDetail(); renderProgress(); renderLegend(); renderPlan();
   });
   box.querySelectorAll(".conns li").forEach(li => li.onclick = () => { selected = null; select(li.dataset.id); });
   $("#note").oninput = e => { notes[t.id] = e.target.value; save("snou-notes", notes); };
@@ -339,7 +393,90 @@ function showTip(e, html) {
 }
 function hideTip() { $("#tip").style.opacity = 0; }
 
-renderExams(); renderLegend(); renderDiagram(); renderProgress();
+// ── dnevi (toplotna karta) ──
+const fmt = (d, o) => d.toLocaleDateString("sl-SI", o);
+const examDays = {};
+SUBJECTS.forEach(s => s.exams.forEach(e => (examDays[e] ||= []).push(s)));
+const logByDay = Object.fromEntries(LOG.map(e => [e.date, e]));
+let pickedDay = TODAY_ISO;
+
+function renderHeatmap() {
+  const start = new Date(2026, 8, 28);               // ponedeljek pred 1. 10.
+  const lastExam = Object.keys(examDays).sort().pop();
+  const end = new Date(lastExam + "T00:00"); end.setDate(end.getDate() + 7);
+  const C = 13, G = 3, L = 26, T = 18;
+  const weeks = Math.ceil((end - start) / 864e5 / 7);
+  let h = "", lastMonth = -1;
+  for (let w = 0; w < weeks; w++) {
+    for (let d = 0; d < 7; d++) {
+      const day = new Date(start); day.setDate(start.getDate() + w * 7 + d);
+      const k = iso(day), x = L + w * (C + G), y = T + d * (C + G);
+      if (d === 0 && day.getMonth() !== lastMonth && day.getDate() <= 7) {
+        lastMonth = day.getMonth();
+        h += `<text x="${x}" y="11" font-size="10.5" fill="var(--muted)">${fmt(day, {month: "short"})}</text>`;
+      }
+      const ex = examDays[k], lg = logByDay[k], n = lg ? lg.items.length : 0;
+      const future = day > TODAY;
+      let fill = "var(--line)", op = future ? 0.45 : 1, stroke = "none";
+      if (n) { fill = "#d9d4ff"; op = Math.min(0.35 + n * 0.18, 1); }
+      if (ex) { fill = ex[0].color; op = 0.9; }
+      if (k === TODAY_ISO) stroke = "#fff";
+      if (k === pickedDay) stroke = "#fff";
+      h += `<rect class="cell" data-k="${k}" x="${x}" y="${y}" width="${C}" height="${C}" rx="3" fill="${fill}" fill-opacity="${op}" stroke="${stroke}" stroke-width="${k === pickedDay ? 1.6 : 1}"${n ? ` style="filter:drop-shadow(0 0 3px #b9b0ff)"` : ""}/>`;
+    }
+  }
+  ["pon", "", "sre", "", "pet", "", "ned"].forEach((t, d) => t && (h += `<text x="0" y="${T + d * (C + G) + 10}" font-size="10" fill="var(--faint)">${t}</text>`));
+  const W2 = L + weeks * (C + G), H2 = T + 7 * (C + G);
+  $("#heatmap").innerHTML = `<svg viewBox="0 0 ${W2} ${H2}">${h}</svg>`;
+  $("#heatmap").querySelectorAll(".cell").forEach(r => r.onclick = () => { pickedDay = r.dataset.k; renderHeatmap(); });
+  renderDayLog();
+}
+
+function renderDayLog() {
+  const d = new Date(pickedDay + "T00:00"), lg = logByDay[pickedDay], ex = examDays[pickedDay] || [];
+  const tasks = TASKS.filter(t => t.date === pickedDay);
+  let h = `<div class="d">${pickedDay === TODAY_ISO ? "Danes · " : ""}${fmt(d, {weekday: "long", day: "numeric", month: "long"})}</div><ul>`;
+  ex.forEach(s => h += `<li><span class="dot" style="background:${s.color}"></span><b>Kolokvij · ${s.name}</b></li>`);
+  tasks.forEach(t => h += `<li><span class="dot" style="background:${subj[t.s].color}"></span>Rok: ${t.txt}</li>`);
+  (lg ? lg.items : []).forEach(i => h += `<li><span class="dot" style="background:${subj[i.s]?.color || "#fff"}"></span>${i.txt}</li>`);
+  if (!ex.length && !tasks.length && !lg) h += `<li class="muted">${new Date(pickedDay) > TODAY ? "Še ni načrtovano." : "Nič zapisanega."}</li>`;
+  $("#daylog").innerHTML = h + "</ul>";
+}
+
+// ── načrt ──
+function renderPlan() {
+  const rows = SUBJECTS.map(s => {
+    const next = s.exams.filter(e => e >= TODAY_ISO).sort()[0];
+    const left = TOPICS.filter(t => t.s === s.id && (status[t.id] ?? 0) < 2);
+    const days = next ? Math.round((new Date(next + "T00:00") - TODAY) / 864e5) : null;
+    return { s, next, left, days };
+  }).filter(r => r.next).sort((a, b) => a.days - b.days);
+  $("#plan").innerHTML = rows.map(({s, next, left, days}) => {
+    const weeks = Math.max(days / 7, 0.5);
+    const pace = left.length ? Math.ceil(left.length / weeks) : 0;
+    return `<div class="p" style="--c:${s.color}">
+      <div class="top"><span class="nm"><span class="dot" style="background:${s.color}"></span>${s.name}</span>
+        <span class="when">${days} dni</span></div>
+      <div class="pace">${left.length ? `${left.length} tem še ni »znam« · ≈ ${pace} na teden do ${fmt(new Date(next + "T00:00"), {day: "numeric", month: "short"})}` : "Vse teme znaš. Ponavljaj."}</div>
+      <div class="next">${left.slice(0, 3).map(t => `<button data-id="${t.id}">${t.name}</button>`).join("")}</div>
+    </div>`;
+  }).join("");
+  $("#plan").querySelectorAll("button").forEach(b => b.onclick = () => {
+    selected = null; select(b.dataset.id);
+    $("#detail").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+function renderTasks() {
+  const open = TASKS.filter(t => !t.done).sort((a, b) => a.date.localeCompare(b.date));
+  $("#tasks").innerHTML = open.length ? `<ul>${open.map(t => {
+    const late = t.date < TODAY_ISO;
+    return `<li><span class="dt ${late ? "late" : ""}">${fmt(new Date(t.date + "T00:00"), {day: "numeric", month: "short"})}</span>
+      <span class="dot" style="background:${subj[t.s].color}"></span><span>${t.txt}</span></li>`;
+  }).join("")}</ul>` : `<div class="muted" style="font-size:13px;margin-top:6px">Še ni rokov. Pošlji mi datume poročil in nalog.</div>`;
+}
+
+renderExams(); renderHeatmap(); renderLegend(); renderDiagram(); renderProgress(); renderPlan(); renderTasks();
 </script>
 </body>
 </html>
