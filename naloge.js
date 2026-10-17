@@ -62,3 +62,25 @@ const PROBLEMS = [
   { paper: "m-k1-25", n: 3, t: "absolutna", text: `Poišči vse rešitve neenačbe |x − 2|1 − x|| ≤ 1.` },
   { paper: "m-k1-25", n: 4, t: "funkcije", text: `Naj bo f(x) = ${fr("x + 2", "1 − 3x")}. Določi naravno definicijsko območje in zalogo vrednosti funkcije f ter zapiši njen inverz.` },
 ];
+
+// ─────────────────────────────────────────────────────────────
+//  GRADIVO: zapiski predavanj (poglavje → stran v PDF) in vaje za vsako temo
+// ─────────────────────────────────────────────────────────────
+const Z = "gradivo/matematika1/zapiski/Matematika1_Slapar.pdf";
+const V = f => `gradivo/matematika1/vaje/${f}.pdf`;
+const GRADIVO = {
+  mnozice:   [{ z: "1. Množice in izjave", href: Z + "#page=4" }, { v: "Množice", href: V("vaje2") }, { v: "Logika in izjavni račun", href: V("vaje3") }],
+  indukcija: [{ z: "2.1 Naravna števila", href: Z + "#page=10" }, { v: "Matematična indukcija", href: V("vaje_indukcija") }],
+  absolutna: [{ z: "2.4 Realna števila", href: Z + "#page=15" }, { v: "Števila (absolutna vrednost)", href: V("vaje5") }, { v: "Ponavljanje", href: V("vaje1") }, { v: "Ponavljanje (krajše)", href: V("Ponavljanje") }],
+  supinf:    [{ z: "2.4 Realna števila", href: Z + "#page=15" }, { v: "Števila (sup, inf)", href: V("vaje5") }],
+  kompleksna:[{ z: "2.5 Kompleksna števila", href: Z + "#page=22" }, { v: "Kompleksna števila", href: V("vaje6") }],
+  funkcije:  [{ z: "3. Preslikave", href: Z + "#page=28" }, { z: "6. Realne funkcije", href: Z + "#page=53" }, { v: "Funkcije", href: V("vaje7") }, { v: "Elementarne funkcije", href: V("vaje10") }],
+  zaporedja: [{ z: "4. Zaporedja", href: Z + "#page=31" }, { v: "Zaporedja", href: V("vaje8") }, { v: "Zaporedja, dodatno", href: V("vaje_zaporedja_dodatno") }],
+  vrste:     [{ z: "5. Številske vrste", href: Z + "#page=43" }, { v: "Številske vrste", href: V("vaje9") }],
+  limita:    [{ z: "7.1 Limita funkcije", href: Z + "#page=55" }, { v: "Limite in zveznost", href: V("vaje11") }],
+  zveznost:  [{ z: "7.4 Zveznost", href: Z + "#page=60" }, { v: "Limite in zveznost", href: V("vaje11") }],
+  odvod:     [{ z: "8. Odvod", href: Z + "#page=67" }, { v: "Odvod", href: V("vaje12") }],
+  uporaba:   [{ z: "8.6 Ekstremi", href: Z + "#page=75" }, { z: "8.9 Risanje grafov", href: Z + "#page=83" }, { v: "Odvod", href: V("vaje12") }],
+  integral:  [{ z: "9. Nedoločeni integral", href: Z + "#page=86" }, { z: "10. Določeni integral", href: Z + "#page=96" }, { v: "Nedoločeni integral", href: V("vaje13") }, { v: "Določeni integral", href: V("vaje14") }],
+  taylor:    [{ z: "11.4 Taylorjeva vrsta", href: Z + "#page=123" }, { v: "Taylorjeva vrsta", href: V("vaje15") }],
+};

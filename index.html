@@ -137,6 +137,12 @@
   .probs .tx { font-size: 14px; line-height: 1.75; }
   .probs button { font: 12px Inter, sans-serif; border-radius: 999px; padding: 4px 10px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; }
   .probs button.ok { background: var(--c); border-color: var(--c); color: #111; font-weight: 600; }
+  .gr { display: flex; flex-direction: column; gap: 6px; }
+  .grow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .gl { font-size: 12px; color: var(--muted); width: 58px; }
+  .gchip { font-size: 12.5px; color: var(--text); text-decoration: none; border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: 6px; padding: 3px 9px; background: var(--bg); }
+  .gchip:hover { border-color: var(--c); }
+  .gchip::after { content: " ↗"; color: var(--muted); }
   @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 </style>
 </head>
@@ -385,6 +391,11 @@ function renderDetail() {
     <ul class="help">${sp.map(({o, why, v}) => `<li><span class="dot" style="background:${subj[o.s].color};width:8px;height:8px;border-radius:50%;flex:none;display:inline-block"></span>
       <span><b>${o.name}</b> <span class="muted">· ${STATUS[v]}</span>${why ? `<br><span class="why">${why}</span>` : ""}</span></li>`).join("")}</ul>` : ""; })()}
     ${deepHtml(t, s)}
+    ${(() => { const g = (typeof GRADIVO !== "undefined") && GRADIVO[t.id]; if (!g) return "";
+      const chip = (x, lbl) => `<a class="gchip" href="${x.href}" target="_blank" style="--c:${s.color}">${lbl}</a>`;
+      return `<div class="sec">Gradivo</div><div class="gr">
+        <div class="grow"><span class="gl">Zapiski</span>${g.filter(x => x.z).map(x => chip(x, x.z)).join("")}</div>
+        <div class="grow"><span class="gl">Vaje</span>${g.filter(x => x.v).map(x => chip(x, x.v)).join("")}</div></div>`; })()}
     ${(() => { const ps = PROBLEMS.filter(p => p.t === t.id); if (!ps.length) return "";
       const done = ps.filter(p => solved[pkey(p)]).length;
       return `<div class="sec">Iz preteklih kolokvijev · rešenih ${done}/${ps.length}</div>
