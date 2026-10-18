@@ -113,7 +113,7 @@ Object.assign(GRADIVO, {
 // ─────────────────────────────────────────────────────────────
 //  LINEARNA ALGEBRA — pretekli računski kolokviji in izpiti
 // ─────────────────────────────────────────────────────────────
-const mx = rows => `<span class="mx">${rows.map(r => `<span>${r.map(x => `<i>${x}</i>`).join("")}</span>`).join("")}</span>`;
+const mx = rows => `<span class="mx">${rows.map(r => `<span>${r.map(x => `<i>${String(x).replace(/^-/, "−")}</i>`).join("")}</span>`).join("")}</span>`;
 const vec = s => `<span class="vec">${s}</span>`;
 
 PAPERS.push(

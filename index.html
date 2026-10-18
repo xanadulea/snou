@@ -177,11 +177,17 @@
   .papers-hm { overflow-x: auto; margin-top: 8px; }
   .papers-hm svg { display: block; width: 100%; min-width: 760px; height: auto; }
   /* panel teme */
-  .drawer { position: fixed; top: 0; right: 0; height: 100vh; width: min(620px, 100vw); background: var(--panel); border-left: 1px solid var(--line); overflow-y: auto; padding: 22px 26px 50px; transform: translateX(100%); transition: transform .25s ease; z-index: 20; box-shadow: -24px 0 60px #0009; }
-  .drawer.open { transform: none; }
-  .scrim { position: fixed; inset: 0; background: #0007; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 10; }
-  .scrim.open { opacity: 1; pointer-events: auto; }
-  .x { position: sticky; top: 0; float: right; background: var(--bg); border: 1px solid var(--line); color: var(--text); border-radius: 50%; width: 34px; height: 34px; font-size: 19px; line-height: 1; cursor: pointer; z-index: 1; }
+  .drawer { position: fixed; inset: 0; background: var(--bg); overflow-y: auto; z-index: 20; opacity: 0; pointer-events: none; transform: translateY(14px); transition: opacity .2s, transform .2s; }
+  .drawer.open { opacity: 1; pointer-events: auto; transform: none; }
+  #detail { max-width: 820px; margin: 0 auto; padding: 0 22px 80px; }
+  #detail h2 { font-size: 40px; line-height: 1.05; margin: 4px 0 8px; }
+  .scrim { display: none; }
+  .topbar { position: sticky; top: 0; z-index: 2; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .topbar > div { max-width: 820px; margin: 0 auto; padding: 12px 22px; display: flex; align-items: center; gap: 12px; }
+  .x { background: none; border: 1px solid var(--line); color: var(--text); border-radius: 999px; padding: 6px 14px; font: 13.5px Inter, sans-serif; cursor: pointer; }
+  .x:hover { border-color: var(--muted); }
+  .topbar .crumb { color: var(--muted); font-size: 13px; }
+  #detail > :first-child { margin-top: 28px; }
   .mx { display: inline-flex; flex-direction: column; vertical-align: middle; border-left: 1.5px solid currentColor; border-right: 1.5px solid currentColor; border-radius: 3px; padding: 1px 5px; margin: 0 2px; font-size: .92em; line-height: 1.3; }
   .mx > span { display: flex; gap: 10px; justify-content: space-between; }
   .mx i { font-style: normal; min-width: 14px; text-align: right; }
@@ -269,6 +275,39 @@
   .thist div { width: 22px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
   .thist span { width: 100%; border-radius: 3px 3px 0 0; }
   .thist i { font-style: normal; font-size: 10px; color: var(--muted); margin-top: 2px; }
+  /* rešitve */
+  .solbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+  .steps { margin: 14px 0 0; padding: 0; list-style: none; counter-reset: st; }
+  .steps > li { counter-increment: st; position: relative; padding: 10px 0 10px 40px; border-top: 1px dashed var(--line); }
+  .steps > li::before { content: counter(st); position: absolute; left: 0; top: 10px; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--c); color: var(--c); font: 600 13px/23px Inter, sans-serif; text-align: center; }
+  .steps .st { font-size: 15.5px; line-height: 1.9; }
+  .why { margin-top: 4px; background: none; border: 0; padding: 0; color: var(--muted); font: 12.5px Inter, sans-serif; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .why:hover { color: var(--text); }
+  .expl { margin-top: 8px; padding: 10px 14px; background: var(--panel); border-left: 3px solid var(--c); border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.65; }
+  .epic { margin-top: 10px; }
+  .answer { margin-top: 12px; padding: 12px 16px; border: 1.5px solid var(--c); border-radius: 10px; font-size: 15.5px; display: flex; flex-direction: column; gap: 4px; }
+  .selfck { display: inline-flex; gap: 6px; align-items: center; margin-left: auto; }
+  .selfck button { font: 12.5px Inter, sans-serif; border-radius: 999px; padding: 4px 11px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
+  .selfck button.on.ok { background: #7fcf86; border-color: #7fcf86; color: #111; font-weight: 600; }
+  .selfck button.on.bad { background: #e8665a; border-color: #e8665a; color: #111; font-weight: 600; }
+  .papnav { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 8px; }
+  .papnav button { font: 12.5px Inter, sans-serif; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; cursor: pointer; }
+  .papnav button.on { color: #111; background: var(--c); border-color: var(--c); font-weight: 600; }
+  .pp { border-top: 1px solid var(--line); padding: 22px 0 18px; }
+  .ppn { display: flex; gap: 10px; align-items: baseline; margin-bottom: 8px; }
+  .ppn > span:first-child { font: 400 24px/1 "Instrument Serif", serif; color: var(--c); }
+  .tagt { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; cursor: pointer; color: var(--muted); }
+  .tagt:hover { color: var(--text); border-color: var(--c); }
+  .pp > .tx { font-size: 16.5px; line-height: 1.8; }
+  .papfoot { display: flex; justify-content: space-between; margin-top: 26px; }
+  .papchips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .papchips button { display: flex; align-items: center; gap: 6px; font: 12.5px Inter, sans-serif; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; cursor: pointer; }
+  .papchips button:hover { border-color: var(--c); }
+  .papchips b { color: var(--c); font-weight: 600; }
+  .pdots { display: inline-flex; gap: 2px; margin-left: 2px; }
+  .pdots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line); }
+  .pdots i.ok { background: #7fcf86; } .pdots i.bad { background: #e8665a; }
+  .probs li { display: block !important; }
   @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 </style>
 </head>
@@ -301,7 +340,7 @@
 
 <div class="scrim" id="scrim"></div>
 <div class="test" id="test" hidden></div>
-<aside class="drawer" id="drawer"><button class="x" id="close" aria-label="Zapri">×</button><div id="detail"></div></aside>
+<aside class="drawer" id="drawer"><div class="topbar"><div><button class="x" id="close">← Nazaj</button><span class="crumb">snou</span></div></div><div id="detail"></div></aside>
 
 <script src="data.js"></script>
 <script src="deep.js"></script>
@@ -309,6 +348,7 @@
 <script src="naloge.js"></script>
 <script src="sub.js"></script>
 <script src="kviz.js"></script>
+<script src="resitve.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const NS = "http://www.w3.org/2000/svg";
@@ -342,6 +382,9 @@ let plans = load("snou-plan");                   // datum → [{ t, i, done }]
 let quizLog = load("snou-quiz");                 // datum → število rešenih kvizov
 let tests = (() => { try { return JSON.parse(localStorage.getItem("snou-tests")) || []; } catch { return []; } })();
 let quiz = null;
+let curPaper = null;
+let wrong = load("snou-wrong");
+const solOpen = {}, whyOpen = {};
 const pkey = p => `${p.paper}-${p.n}`;
 
 let selected = null, hovered = null;
@@ -482,7 +525,8 @@ function refreshDrawer(top) {
   $("#scrim").classList.toggle("open", on);
   if (on && top) $("#drawer").scrollTop = 0;
 }
-function closeDrawer() { selected = null; openSubj = null; mode = null; quiz = null; refreshDrawer(); renderHeatmap(); }
+function closeDrawer() { selected = null; openSubj = null; mode = null; quiz = null; curPaper = null; refreshDrawer(); renderHeatmap(); }
+function openPaper(id) { mode = "paper"; curPaper = id; selected = null; openSubj = null; refreshDrawer(true); }
 
 // ── podteme ──
 const MARKS = [["z", "✓", "znam"], ["n", "✗", "ne znam"], ["v", "?", "vprašaj Claude"]];
@@ -549,6 +593,7 @@ function deepHtml(t, s) {
 
 function renderDetail() {
   const box = $("#detail");
+  if (mode === "paper") return renderPaperView();
   if (mode === "plan") return renderPlanView();
   if (mode === "quiz") return renderQuizView();
   if (!selected) { if (openSubj) renderSubjectView(); return; }
@@ -584,8 +629,7 @@ function renderDetail() {
       const done = ps.filter(p => solved[pkey(p)]).length;
       return `<div class="sec">${t.s === "mat" || t.s === "la" ? "Iz preteklih kolokvijev" : "Naloge"} · rešenih ${done}/${ps.length}</div>
       <ul class="probs" style="--c:${s.color}">${ps.map(p => { const pa = PAPERS.find(x => x.id === p.paper);
-        return `<li><div><div class="src">${pa.label} · ${pa.year} · ${p.n}. naloga${p.code ? " · " + p.code : ""}</div><div class="tx">${p.text}</div></div>
-        <button data-k="${pkey(p)}" class="${solved[pkey(p)] ? "ok" : ""}">${solved[pkey(p)] ? "rešila ✓" : "rešila?"}</button></li>`; }).join("")}</ul>`; })()}
+        return `<li><div style="flex:1"><div class="src">${pa.label} · ${pa.year} · ${p.n}. naloga${p.code ? " · " + p.code : ""}</div><div class="tx">${p.text}</div>${solBlock(p)}</div></li>`; }).join("")}</ul>`; })()}
     <div class="sec">Povezave · ${conns.length}</div>
     <ul class="conns">${conns.map(({o, why}) => `
       <li data-id="${o.id}"><span class="dot" style="background:${subj[o.s].color}"></span>
@@ -598,10 +642,7 @@ function renderDetail() {
     status = computeStatus();
     renderDiagram(); renderDetail(); renderLegend(); renderSubjects();
   });
-  box.querySelectorAll(".probs button").forEach(b => b.onclick = () => {
-    solved[b.dataset.k] ? delete solved[b.dataset.k] : (solved[b.dataset.k] = TODAY_ISO);
-    save("snou-solved", solved); renderDetail(); renderPapers();
-  });
+  bindSol(box, renderDetail);
   box.querySelectorAll(".conns li").forEach(li => li.onclick = () => { selected = null; select(li.dataset.id); });
   bindMarks(box);
   box.querySelectorAll("[data-quiz-topic]").forEach(b => b.onclick = () => startQuiz(QUIZ.filter(q => q.t === b.dataset.quizTopic), t.name));
@@ -766,6 +807,60 @@ function support(id) {
     .map(x => ({ ...x, v: status[x.o.id] }));
 }
 const ready = id => (status[id] ?? 0) < 2 && support(id).length > 0;
+
+// ── rešitve korak za korakom ──
+function solBlock(p) {
+  const k = pkey(p), S = SOL[`${p.paper}|${p.n}`];
+  const res = solved[k] ? "ok" : wrong[k] ? "bad" : "";
+  let h = "";
+  if (!S) return h;
+  const n = solOpen[k] || 0;
+  if (!n) return `<div class="solbar"><button class="go" data-sol="${k}" data-n="1">Pokaži 1. korak</button><button class="go" data-sol="${k}" data-n="${S.steps.length}">Pokaži celo rešitev</button>${selfCheck(k, res)}</div>`;
+  h += `<ol class="steps">${S.steps.slice(0, n).map(([st, why, pic], i) => {
+    const wk = `${k}#${i}`, open = whyOpen[wk];
+    return `<li><div class="st">${st}</div>${why || pic ? `<button class="why" data-why="${wk}">${open ? "Skrij razlago" : "Zakaj?"}</button>` : ""}
+      ${open ? `<div class="expl">${why || ""}${pic ? `<div class="epic">${pic}</div>` : ""}</div>` : ""}</li>`; }).join("")}</ol>`;
+  if (n < S.steps.length) h += `<div class="solbar"><button class="go" data-sol="${k}" data-n="${n + 1}">Naslednji korak ↓</button><button class="go" data-sol="${k}" data-n="${S.steps.length}">Pokaži vse</button></div>`;
+  else h += `<div class="answer"><span class="lbl" style="margin:0">Rezultat</span><div>${S.ans}</div></div>`;
+  return h + `<div class="solbar">${n ? `<button class="go" data-sol="${k}" data-n="0">Skrij rešitev</button>` : ""}${selfCheck(k, res)}</div>`;
+}
+function selfCheck(k, res) {
+  return `<span class="selfck"><span class="muted small">Moja rešitev:</span>
+    <button data-res="${k}|ok" class="${res === "ok" ? "on ok" : ""}">✓ prav</button><button data-res="${k}|bad" class="${res === "bad" ? "on bad" : ""}">✗ napaka</button></span>`;
+}
+function bindSol(box, rerender) {
+  box.querySelectorAll("[data-sol]").forEach(b => b.onclick = () => { solOpen[b.dataset.sol] = +b.dataset.n; keepScroll(rerender); });
+  box.querySelectorAll("[data-why]").forEach(b => b.onclick = () => { whyOpen[b.dataset.why] = !whyOpen[b.dataset.why]; keepScroll(rerender); });
+  box.querySelectorAll("[data-res]").forEach(b => b.onclick = () => {
+    const [k, r] = b.dataset.res.split("|");
+    if (r === "ok") { solved[k] ? delete solved[k] : (solved[k] = TODAY_ISO); delete wrong[k]; }
+    else { wrong[k] ? delete wrong[k] : (wrong[k] = TODAY_ISO); delete solved[k]; }
+    save("snou-solved", solved); save("snou-wrong", wrong); keepScroll(rerender); renderSubjects();
+  });
+}
+function keepScroll(fn) { const y = $("#drawer").scrollTop; fn(); $("#drawer").scrollTop = y; }
+
+function papersWithSol(sid) { return PAPERS.filter(p => p.s === sid && PROBLEMS.some(q => q.paper === p.id && SOL[`${q.paper}|${q.n}`])); }
+function renderPaperView() {
+  const box = $("#detail"), pa = PAPERS.find(p => p.id === curPaper), s = subj[pa.s];
+  const list = papersWithSol(pa.s), idx = list.findIndex(p => p.id === pa.id);
+  const probs = PROBLEMS.filter(q => q.paper === pa.id).sort((a, b) => a.n - b.n);
+  const done = probs.filter(q => solved[pkey(q)]).length;
+  box.style.setProperty("--c", s.color);
+  const title = pa.k === 0 ? `${pa.label} · ${pa.year}` : pa.k === 9 ? `Izpit · ${pa.year}` : `${pa.k}. kolokvij · ${pa.year}`;
+  box.innerHTML = `
+    <div style="font-size:12.5px;color:${s.color}">${s.name}</div>
+    <h2>${title}</h2>
+    <div class="papnav">${list.map(p => `<button data-pp="${p.id}" class="${p.id === pa.id ? "on" : ""}">${p.k === 0 ? p.year : (p.k === 9 ? "Izpit " : `K${p.k} `) + (p.short || p.year)}</button>`).join("")}</div>
+    <div class="muted small" style="margin:6px 0 4px">Najprej reši sama na papir. Potem odpiraj korak za korakom in primerjaj. Ko ne razumeš koraka, klikni »Zakaj?«. Rešeno: ${done}/${probs.length}</div>
+    ${probs.map(q => `<section class="pp">
+      <div class="ppn"><span>${q.n}. naloga</span><span class="tagt" data-open-t="${q.t}">${topic[q.t].name}</span>${q.code ? `<span class="muted small">${q.code}</span>` : ""}</div>
+      <div class="tx">${q.text}</div>${solBlock(q)}</section>`).join("")}
+    <div class="papfoot">${idx > 0 ? `<button class="go" data-pp="${list[idx - 1].id}">← Prejšnji</button>` : "<span></span>"}${idx < list.length - 1 ? `<button class="go big" data-pp="${list[idx + 1].id}">Naslednji →</button>` : ""}</div>`;
+  bindSol(box, renderPaperView);
+  box.querySelectorAll("[data-pp]").forEach(b => b.onclick = () => { curPaper = b.dataset.pp; renderPaperView(); $("#drawer").scrollTop = 0; });
+  box.querySelectorAll("[data-open-t]").forEach(b => b.onclick = () => { selected = null; select(b.dataset.openT); });
+}
 
 // ── današnji načrt ──
 function nextK(s) { const ni = s.exams.findIndex(e => e >= TODAY_ISO); return ni < 0 ? null : ni + 1; }
@@ -979,7 +1074,12 @@ function renderSubjects() {
         <div class="muted small">${c[2]} od ${n} tem znaš${c[1] ? ` · ${c[1]} vadiš` : ""}</div>
 
       </div>
-      <div>${mid}${next ? "" : taskHtml}</div>
+      <div>${mid}${next ? "" : taskHtml}
+        ${(() => { const L = papersWithSol(s.id); if (!L.length) return "";
+          return `<div class="lbl" style="margin-top:16px">Rešene naloge · klikni in vadi</div><div class="papchips">${L.map(p => {
+            const pr = PROBLEMS.filter(q => q.paper === p.id), d = pr.filter(q => solved[pkey(q)]).length;
+            return `<button data-paper="${p.id}"><b>${p.k === 0 ? p.label : p.k === 9 ? "Izpit" : "K" + p.k}</b> ${p.short || p.year}<span class="pdots">${pr.map(q => `<i class="${solved[pkey(q)] ? "ok" : wrong[pkey(q)] ? "bad" : ""}"></i>`).join("")}</span></button>`; }).join("")}</div>`; })()}
+      </div>
       <div>
         <div class="lbl">Naslednje${tagged && next ? ` za ${k}. kolokvij` : ""}</div>
         <div class="chips">${left.slice(0, 4).map(t => `<button data-id="${t.id}" class="${ready(t.id) ? "ready" : ""}">${t.name}</button>`).join("") || `<span class="muted small">Vse znaš. Ponavljaj.</span>`}</div>
@@ -992,6 +1092,7 @@ function renderSubjects() {
   }).join("");
   $("#subjects").querySelectorAll("[data-id]").forEach(b => b.onclick = () => { selected = null; select(b.dataset.id); });
   $("#subjects").querySelectorAll("[data-test]").forEach(b => b.onclick = () => startTest(b.dataset.test));
+  $("#subjects").querySelectorAll("[data-paper]").forEach(b => b.onclick = () => openPaper(b.dataset.paper));
   $("#subjects").querySelectorAll(".toggle").forEach(b => b.onclick = () => { showAllPapers[b.dataset.s] = !showAllPapers[b.dataset.s]; renderSubjects(); });
   renderPapers();
 }
