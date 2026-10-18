@@ -35,7 +35,8 @@
   .legend { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 4px; }
   .chip { cursor: pointer; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px 4px 10px; font-size: 13px; background: transparent; color: var(--text); font-family: inherit; display: flex; align-items: center; gap: 7px; }
   .chip .dot { width: 9px; height: 9px; border-radius: 50%; }
-  .chip.off { opacity: .35; }
+  .chip:hover, .chip.cur { border-color: var(--c); }
+  .chip .qn { font-size: 11px; font-weight: 600; background: #fff; color: #111; border-radius: 999px; padding: 0 6px; }
   .chip .pct { color: var(--muted); font-size: 12px; }
 
   /* diagram */
@@ -409,7 +410,7 @@ function select(id) {
 }
 function openSubject(sid) { openSubj = sid; selected = null; refreshDrawer(true); }
 function refreshDrawer(top) {
-  highlight(); renderPapers(); renderDetail();
+  renderLegend(); highlight(); renderPapers(); renderDetail();
   const on = !!(selected || openSubj);
   $("#drawer").classList.toggle("open", on);
   $("#scrim").classList.toggle("open", on);
@@ -432,7 +433,7 @@ function subCount(tids) {
 function bindMarks(box) {
   box.querySelectorAll("[data-mk]").forEach(b => b.onclick = () => {
     marks[b.dataset.mk] === b.dataset.v ? delete marks[b.dataset.mk] : (marks[b.dataset.mk] = b.dataset.v);
-    save("snou-marks", marks); renderDetail(); renderSubjects();
+    save("snou-marks", marks); renderDetail(); renderSubjects(); renderLegend();
   });
 }
 const markLegend = `<div class="mlegend">${MARKS.map(([k, ic, lbl]) => `<span><b class="mk ${k}">${ic}</b>${lbl}</span>`).join("")}</div>`;
@@ -547,15 +548,11 @@ function counts(sid) {
 
 function renderLegend() {
   $("#legend").innerHTML = SUBJECTS.map(s => {
-    const { c, n } = counts(s.id);
-    return `<button class="chip ${hidden.has(s.id) ? "off" : ""}" data-id="${s.id}">
-      <span class="dot" style="background:${s.color}"></span>${s.name}<span class="pct">${Math.round(c[2]/n*100)}%</span></button>`;
+    const sc = subCount(TOPICS.filter(t => t.s === s.id).map(t => t.id));
+    return `<button class="chip ${openSubj === s.id ? "cur" : ""}" data-id="${s.id}" style="--c:${s.color}" title="Odpri vse teme">
+      <span class="dot" style="background:${s.color}"></span>${s.name}<span class="pct">${Math.round(sc.z / Math.max(sc.all, 1) * 100)}%</span>${sc.v ? `<span class="qn">${sc.v} ?</span>` : ""}</button>`;
   }).join("");
-  $("#legend").querySelectorAll(".chip").forEach(b => b.onclick = () => {
-    hidden.has(b.dataset.id) ? hidden.delete(b.dataset.id) : hidden.add(b.dataset.id);
-    if (hidden.size === SUBJECTS.length) hidden.clear();
-    renderLegend(); highlight();
-  });
+  $("#legend").querySelectorAll(".chip").forEach(b => b.onclick = () => openSubject(b.dataset.id));
 }
 
 // ── namig ──
@@ -717,8 +714,7 @@ function renderSubjects() {
         ${next ? `<div class="big">${days === 0 ? "danes" : days + " dni"}</div><div class="muted small">do ${k}. kolokvija · ${fmt(new Date(next + "T00:00"), {day: "numeric", month: "long"})}</div>` : ""}
         <div class="bar"><div style="width:${c[2] / n * 100}%"></div><div style="width:${c[1] / n * 100}%;opacity:.45"></div></div>
         <div class="muted small">${c[2]} od ${n} tem znaš${c[1] ? ` · ${c[1]} vadiš` : ""}</div>
-        ${(() => { const sc = subCount(ts.map(t => t.id)); return sc.v ? `<div class="small" style="margin-top:6px">❔ ${sc.v} za vprašati Claude</div>` : ""; })()}
-        <button class="opensubj" data-subj="${s.id}">Vse teme in podteme →</button>
+
       </div>
       <div>${mid}${next ? "" : taskHtml}</div>
       <div>
@@ -732,7 +728,6 @@ function renderSubjects() {
     </div>`;
   }).join("");
   $("#subjects").querySelectorAll("[data-id]").forEach(b => b.onclick = () => { selected = null; select(b.dataset.id); });
-  $("#subjects").querySelectorAll("[data-subj]").forEach(b => b.onclick = () => openSubject(b.dataset.subj));
   $("#subjects").querySelectorAll(".toggle").forEach(b => b.onclick = () => { showAllPapers[b.dataset.s] = !showAllPapers[b.dataset.s]; renderSubjects(); });
   renderPapers();
 }
