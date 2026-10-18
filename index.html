@@ -211,6 +211,64 @@
   .opensubj { margin-top: 14px; }
   .back { background: none; border: 0; color: var(--muted); cursor: pointer; font: 13px Inter, sans-serif; padding: 0; margin-bottom: 12px; }
   .back:hover { color: var(--text); }
+  /* danes */
+  .lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin-bottom: 7px; }
+  .today { list-style: none; padding: 0; margin: 0; }
+  .today li { display: flex; gap: 8px; align-items: center; padding: 4px 0; font-size: 13.5px; }
+  .today li > span { cursor: pointer; flex: 1; }
+  .today li.done > span { text-decoration: line-through; color: var(--muted); }
+  .ck { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--c); background: transparent; color: #111; font: 700 11px Inter, sans-serif; cursor: pointer; padding: 0; flex: none; }
+  .today li.done .ck { background: var(--c); }
+  .todaybtns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .go { font: 12.5px Inter, sans-serif; color: var(--text); background: var(--bg); border: 1px solid var(--c, #d9d4ff); border-radius: 999px; padding: 5px 13px; cursor: pointer; }
+  .go:hover { background: var(--line); }
+  .go.big { font-size: 14px; padding: 8px 18px; font-weight: 600; }
+  .go:disabled { opacity: .4; cursor: default; }
+  .picked { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 4px; }
+  .pk { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; border: 1px solid var(--c); border-radius: 999px; padding: 3px 4px 3px 10px; }
+  .pk .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .pk button { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 0 5px; }
+  .psub { margin-top: 22px; }
+  .psh { display: flex; align-items: center; gap: 8px; font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid var(--c); }
+  .psh .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .ptopic { margin-top: 10px; }
+  .ptn { font-size: 13px; color: var(--muted); margin-bottom: 5px; }
+  .chipsx { display: flex; flex-wrap: wrap; gap: 5px; }
+  .sc { font: 12px Inter, sans-serif; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 4px 9px; cursor: pointer; text-align: left; }
+  .sc.z { color: var(--muted); } .sc b { font-weight: 700; } .sc.n b { color: #ff8a7d; } .sc.z b { color: var(--c); }
+  .sc.on { background: var(--c); border-color: var(--c); color: #111; } .sc.on b { color: #111; }
+  /* kviz */
+  .qdots { display: flex; gap: 5px; margin: 12px 0 18px; flex-wrap: wrap; }
+  .qdots span { width: 22px; height: 6px; border-radius: 3px; background: var(--line); }
+  .qdots .ok { background: #7fcf86; } .qdots .bad { background: #e8665a; } .qdots .cur { background: var(--c); }
+  .qmeta { display: flex; gap: 7px; align-items: center; font-size: 12.5px; color: var(--muted); }
+  .qmeta .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .qq { font-size: 25px !important; line-height: 1.25 !important; margin: 8px 0 18px !important; }
+  .qopts { display: flex; flex-direction: column; gap: 8px; }
+  .qopts button { display: flex; gap: 12px; align-items: baseline; text-align: left; font: 14.5px/1.45 Inter, sans-serif; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; cursor: pointer; }
+  .qopts button:hover:not(:disabled) { border-color: var(--c); }
+  .qopts .ol { color: var(--muted); font-weight: 600; font-size: 12.5px; }
+  .qopts .right { border-color: #7fcf86; background: #1b2a1e; } .qopts .wrong { border-color: #e8665a; background: #2e1b1d; } .qopts .dim { opacity: .45; }
+  .qwhy { margin: 16px 0; padding: 13px 15px; border-radius: 10px; font-size: 14px; line-height: 1.65; border-left: 3px solid; background: var(--bg); }
+  .qwhy.ok { border-color: #7fcf86; } .qwhy.bad { border-color: #e8665a; }
+  .qwhy svg { display: block; margin-top: 10px; }
+  /* poskusni kolokvij */
+  .test { position: fixed; inset: 0; background: var(--bg); z-index: 30; overflow-y: auto; }
+  .tin { max-width: 760px; margin: 0 auto; padding: 28px 20px 60px; }
+  .thd { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; position: sticky; top: 0; background: var(--bg); padding: 10px 0; z-index: 1; }
+  .clock { font: 400 46px/1 "Instrument Serif", serif; color: var(--c); font-variant-numeric: tabular-nums; }
+  .tbarw { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  .tbarw div { height: 100%; transition: width 1s linear; }
+  .tp { border-top: 1px solid var(--line); padding: 18px 0; }
+  .tp .tn { font-weight: 600; margin-bottom: 6px; color: var(--c); }
+  .tp .tx { font-size: 15.5px; line-height: 1.8; }
+  .grade { display: flex; gap: 6px; margin-top: 10px; }
+  .grade button { font: 13px Inter, sans-serif; padding: 5px 16px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--text); cursor: pointer; }
+  .grade button.on { background: var(--c); border-color: var(--c); color: #111; font-weight: 600; }
+  .thist { display: flex; gap: 6px; align-items: flex-end; height: 54px; margin-top: 12px; }
+  .thist div { width: 22px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+  .thist span { width: 100%; border-radius: 3px 3px 0 0; }
+  .thist i { font-style: normal; font-size: 10px; color: var(--muted); margin-top: 2px; }
   @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 </style>
 </head>
@@ -242,6 +300,7 @@
 </section>
 
 <div class="scrim" id="scrim"></div>
+<div class="test" id="test" hidden></div>
 <aside class="drawer" id="drawer"><button class="x" id="close" aria-label="Zapri">×</button><div id="detail"></div></aside>
 
 <script src="data.js"></script>
@@ -249,6 +308,7 @@
 <script src="log.js"></script>
 <script src="naloge.js"></script>
 <script src="sub.js"></script>
+<script src="kviz.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const NS = "http://www.w3.org/2000/svg";
@@ -277,6 +337,11 @@ let solved = load("snou-solved");
 let marks = load("snou-marks");                 // "tema|podtema" → "z" znam · "n" ne znam · "v" vprašaj
 const mkey = (tid, x) => `${tid}|${x}`;
 let openSubj = null;
+let mode = null;                                 // null | "plan" | "quiz"
+let plans = load("snou-plan");                   // datum → [{ t, i, done }]
+let quizLog = load("snou-quiz");                 // datum → število rešenih kvizov
+let tests = (() => { try { return JSON.parse(localStorage.getItem("snou-tests")) || []; } catch { return []; } })();
+let quiz = null;
 const pkey = p => `${p.paper}-${p.n}`;
 
 let selected = null, hovered = null;
@@ -404,19 +469,20 @@ function highlight() {
 
 // ── izbrana tema ──
 function select(id) {
+  mode = null;
   selected = selected === id ? null : id;
   if (selected && openSubj && topic[selected].s !== openSubj) openSubj = null;
   refreshDrawer(true);
 }
-function openSubject(sid) { openSubj = sid; selected = null; refreshDrawer(true); }
+function openSubject(sid) { mode = null; openSubj = sid; selected = null; refreshDrawer(true); }
 function refreshDrawer(top) {
   renderLegend(); highlight(); renderPapers(); renderDetail();
-  const on = !!(selected || openSubj);
+  const on = !!(selected || openSubj || mode);
   $("#drawer").classList.toggle("open", on);
   $("#scrim").classList.toggle("open", on);
   if (on && top) $("#drawer").scrollTop = 0;
 }
-function closeDrawer() { selected = null; openSubj = null; refreshDrawer(); }
+function closeDrawer() { selected = null; openSubj = null; mode = null; quiz = null; refreshDrawer(); renderHeatmap(); }
 
 // ── podteme ──
 const MARKS = [["z", "✓", "znam"], ["n", "✗", "ne znam"], ["v", "?", "vprašaj Claude"]];
@@ -483,6 +549,8 @@ function deepHtml(t, s) {
 
 function renderDetail() {
   const box = $("#detail");
+  if (mode === "plan") return renderPlanView();
+  if (mode === "quiz") return renderQuizView();
   if (!selected) { if (openSubj) renderSubjectView(); return; }
   const t = topic[selected], s = subj[t.s], st = status[t.id] ?? 0;
   const conns = LINKS.filter(([a, b]) => a === t.id || b === t.id)
@@ -498,6 +566,7 @@ function renderDetail() {
     <div class="status">${STATUS.map((n, i) =>
       `<button data-i="${i}" class="${i === st ? "sel" : ""}" style="${i === st ? `background:${s.color};border-color:${s.color}` : ""}">${n}</button>`).join("")}
     </div>
+    ${QUIZ.some(q => q.t === t.id) ? `<button class="go" data-quiz-topic="${t.id}">▶ Kviz · ${QUIZ.filter(q => q.t === t.id).length} vprašanj</button>` : ""}
     ${SUB[t.id] ? `<div class="sec">Kaj je v tej temi · znaš ${tc.z}/${tc.all}</div>${markLegend}${subRows(t)}` : ""}
     ${(() => { const sp = support(t.id); return sp.length && (status[t.id] ?? 0) < 2 ? `
     <div class="sec">Kar že znaš, ti pomaga tukaj</div>
@@ -535,6 +604,7 @@ function renderDetail() {
   });
   box.querySelectorAll(".conns li").forEach(li => li.onclick = () => { selected = null; select(li.dataset.id); });
   bindMarks(box);
+  box.querySelectorAll("[data-quiz-topic]").forEach(b => b.onclick = () => startQuiz(QUIZ.filter(q => q.t === b.dataset.quizTopic), t.name));
   const bk = box.querySelector(".back"); if (bk) bk.onclick = () => { selected = null; refreshDrawer(true); };
   $("#note").oninput = e => { notes[t.id] = e.target.value; save("snou-notes", notes); };
 }
@@ -586,7 +656,8 @@ function renderHeatmap() {
         lastMonth = day.getMonth();
         h += `<text x="${x}" y="11" font-size="10.5" fill="var(--muted)">${fmt(day, {month: "short"})}</text>`;
       }
-      const ex = examDays[k], lg = logByDay[k], n = lg ? lg.items.length : 0;
+      const ex = examDays[k], lg = logByDay[k];
+      const n = (lg ? lg.items.length : 0) + (plans[k] || []).filter(x => x.done).length + (quizLog[k] || 0);
       const future = day > TODAY;
       let fill = "var(--line)", op = future ? 0.45 : 1, stroke = "none";
       if (n) { fill = "#d9d4ff"; op = Math.min(0.35 + n * 0.18, 1); }
@@ -610,8 +681,27 @@ function renderDayLog() {
   ex.forEach(s => h += `<li><span class="dot" style="background:${s.color}"></span><b>Kolokvij · ${s.name}</b></li>`);
   tasks.forEach(t => h += `<li><span class="dot" style="background:${subj[t.s].color}"></span>Rok: ${t.txt}</li>`);
   (lg ? lg.items : []).forEach(i => h += `<li><span class="dot" style="background:${subj[i.s]?.color || "#fff"}"></span>${i.txt}</li>`);
-  if (!ex.length && !tasks.length && !lg) h += `<li class="muted">${new Date(pickedDay) > TODAY ? "Še ni načrtovano." : "Nič zapisanega."}</li>`;
-  $("#daylog").innerHTML = h + "</ul>";
+  const pl = plans[pickedDay] || [];
+  if (!ex.length && !tasks.length && !lg && !pl.length && pickedDay !== TODAY_ISO) h += `<li class="muted">${new Date(pickedDay) > TODAY ? "Še ni načrtovano." : "Nič zapisanega."}</li>`;
+  h += "</ul>";
+  if (pickedDay === TODAY_ISO || pl.length) {
+    h += `<div class="lbl" style="margin-top:12px">${pickedDay === TODAY_ISO ? "Danes študiram" : "Ta dan sem študirala"}</div>`;
+    h += pl.length ? `<ul class="today">${pl.map((x, i) => { const t = topic[x.t], m = marks[mkey(x.t, SUB[x.t][x.i])] || "";
+      return `<li class="${x.done ? "done" : ""}"><button class="ck" data-pi="${i}" style="--c:${subj[t.s].color}">${x.done ? "✓" : ""}</button>
+        <span data-open-t="${t.id}"><span class="muted">${t.name}:</span> ${SUB[x.t][x.i]}</span>${m ? `<b class="mk ${m}" style="--c:${subj[t.s].color}">${MARKS.find(z => z[0] === m)[1]}</b>` : ""}</li>`; }).join("")}</ul>`
+      : `<div class="muted small">Še nič izbrano.</div>`;
+    if (pickedDay === TODAY_ISO) {
+      const nq = quizFor(pl).length;
+      h += `<div class="todaybtns"><button class="go" id="planbtn">${pl.length ? "Uredi" : "Izberi, kaj študiram"}</button>${nq ? `<button class="go" id="todayquiz">▶ Kviz iz današnjih tem · ${nq}</button>` : ""}</div>`;
+    }
+  }
+  $("#daylog").innerHTML = h;
+  $("#daylog").querySelectorAll("[data-pi]").forEach(b => b.onclick = () => {
+    const x = plans[pickedDay][+b.dataset.pi]; x.done = !x.done; save("snou-plan", plans); renderHeatmap();
+  });
+  $("#daylog").querySelectorAll("[data-open-t]").forEach(e => e.onclick = () => { selected = null; select(e.dataset.openT); });
+  const pb = $("#planbtn"); if (pb) pb.onclick = () => { if (!plans[TODAY_ISO]?.length) { plans[TODAY_ISO] = suggestPlan(); save("snou-plan", plans); } openPlan(); };
+  const tq = $("#todayquiz"); if (tq) tq.onclick = () => startQuiz(quizFor(plans[TODAY_ISO]), "Današnje teme");
 }
 
 // ── načrt ──
@@ -677,6 +767,176 @@ function support(id) {
 }
 const ready = id => (status[id] ?? 0) < 2 && support(id).length > 0;
 
+// ── današnji načrt ──
+function nextK(s) { const ni = s.exams.findIndex(e => e >= TODAY_ISO); return ni < 0 ? null : ni + 1; }
+function examFreq(s) {
+  const k = nextK(s), f = {};
+  PAPERS.filter(p => p.s === s.id && p.k === k).forEach(p => new Set(p.tasks.flat()).forEach(id => f[id] = (f[id] || 0) + 1));
+  return f;
+}
+function topicOrder(s) {
+  const k = nextK(s), f = examFreq(s);
+  return TOPICS.filter(t => t.s === s.id)
+    .map((t, i) => ({ t, i, on: !t.k || (t.k || []).includes(k) ? 1 : 0, f: f[t.id] || 0 }))
+    .sort((a, b) => b.on - a.on || b.f - a.f || a.i - b.i).map(x => x.t);
+}
+function suggestPlan() {
+  const out = [];
+  SUBJECTS.filter(s => nextK(s)).sort((a, b) => a.exams[nextK(a) - 1].localeCompare(b.exams[nextK(b) - 1])).forEach(s => {
+    const prio = m => m === "n" ? 0 : m === "v" ? 1 : !m ? 2 : 9;
+    let best = null;
+    topicOrder(s).forEach((t, ti) => (SUB[t.id] || []).forEach((x, i) => {
+      const p = prio(marks[mkey(t.id, x)]);
+      if (p < 9 && (!best || p < best.p || (p === best.p && ti < best.ti))) best = { t: t.id, i, p, ti };
+    }));
+    if (best) out.push({ t: best.t, i: best.i, done: false });
+  });
+  return out;
+}
+function openPlan() { mode = "plan"; selected = null; openSubj = null; refreshDrawer(true); }
+function renderPlanView() {
+  const box = $("#detail"), pl = plans[TODAY_ISO] ||= [];
+  const has = (t, i) => pl.findIndex(x => x.t === t && x.i === i);
+  box.style.setProperty("--c", "#d9d4ff");
+  box.innerHTML = `
+    <div style="font-size:12px;color:var(--muted)">${fmt(TODAY, {weekday: "long", day: "numeric", month: "long"})}</div>
+    <h2>Kaj študiram danes</h2>
+    <div class="muted small">Izberi nekaj stvari, malo iz vsakega predmeta. Zgoraj so tiste za naslednji kolokvij.</div>
+    <div class="picked">${pl.length ? pl.map((x, k) => { const t = topic[x.t];
+      return `<span class="pk" style="--c:${subj[t.s].color}"><span class="dot" style="background:${subj[t.s].color}"></span>${SUB[x.t][x.i]}<button data-rm="${k}">×</button></span>`; }).join("") : `<span class="muted small">Nič še ni izbrano.</span>`}</div>
+    <div class="todaybtns"><button class="go" id="sugg">✦ Predlagaj mi</button>${quizFor(pl).length ? `<button class="go" id="pq">▶ Kviz iz izbranih · ${quizFor(pl).length}</button>` : ""}</div>
+    ${SUBJECTS.map(s => { const k = nextK(s);
+      return `<div class="psub" style="--c:${s.color}"><div class="psh"><span class="dot" style="background:${s.color}"></span>${s.name}${k ? `<span class="muted small" style="margin-left:auto">${k}. kolokvij · ${Math.round((new Date(s.exams[k - 1] + "T00:00") - TODAY) / 864e5)} dni</span>` : ""}</div>
+        ${topicOrder(s).map(t => `<div class="ptopic"><div class="ptn">${t.name}${(t.k || []).includes(k) ? ` <span class="ktag">K${k}</span>` : ""}</div><div class="chipsx">${(SUB[t.id] || []).map((x, i) => {
+          const m = marks[mkey(t.id, x)] || "", on = has(t.id, i) >= 0;
+          return `<button class="sc ${m} ${on ? "on" : ""}" data-add="${t.id}|${i}">${m ? `<b>${MARKS.find(z => z[0] === m)[1]}</b> ` : ""}${x}</button>`; }).join("")}</div></div>`).join("")}</div>`; }).join("")}`;
+  box.querySelectorAll("[data-add]").forEach(b => b.onclick = () => {
+    const [t, i] = b.dataset.add.split("|"), k = has(t, +i);
+    k >= 0 ? pl.splice(k, 1) : pl.push({ t, i: +i, done: false });
+    save("snou-plan", plans); const y = $("#drawer").scrollTop; renderPlanView(); $("#drawer").scrollTop = y; renderHeatmap();
+  });
+  box.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { pl.splice(+b.dataset.rm, 1); save("snou-plan", plans); renderPlanView(); renderHeatmap(); });
+  $("#sugg").onclick = () => { plans[TODAY_ISO] = suggestPlan(); save("snou-plan", plans); renderPlanView(); renderHeatmap(); };
+  const pq = $("#pq"); if (pq) pq.onclick = () => startQuiz(quizFor(pl), "Današnje teme");
+}
+
+// ── kviz ──
+function quizFor(pl) {
+  const exact = QUIZ.filter(q => (pl || []).some(x => x.t === q.t && x.i === q.s));
+  const topicLevel = QUIZ.filter(q => !exact.includes(q) && (pl || []).some(x => x.t === q.t));
+  return [...exact, ...topicLevel].slice(0, Math.max(exact.length, 8));
+}
+function startQuiz(qs, title) {
+  if (!qs.length) return;
+  quiz = { qs: [...qs].sort(() => Math.random() - .5), i: 0, ans: [], title };
+  mode = "quiz"; selected = null; openSubj = null; refreshDrawer(true);
+}
+function renderQuizView() {
+  const box = $("#detail"), Q = quiz;
+  if (Q.i >= Q.qs.length) return renderQuizEnd();
+  const q = Q.qs[Q.i], t = topic[q.t], c = subj[t.s].color, picked = Q.ans[Q.i];
+  box.style.setProperty("--c", c);
+  box.innerHTML = `
+    <div style="font-size:12px;color:var(--muted)">Kviz · ${Q.title}</div>
+    <div class="qdots">${Q.qs.map((_, i) => `<span class="${i < Q.i ? (Q.ans[i] === Q.qs[i].a ? "ok" : "bad") : i === Q.i ? "cur" : ""}"></span>`).join("")}</div>
+    <div class="qmeta"><span class="dot" style="background:${c}"></span>${t.name} · ${SUB[q.t][q.s]}</div>
+    <h2 class="qq">${q.q}</h2>
+    <div class="qopts">${q.opts.map((o, i) => `<button data-o="${i}" class="${picked === undefined ? "" : i === q.a ? "right" : i === picked ? "wrong" : "dim"}" ${picked === undefined ? "" : "disabled"}><span class="ol">${"ABCD"[i]}</span>${o}</button>`).join("")}</div>
+    ${picked === undefined ? "" : `<div class="qwhy ${picked === q.a ? "ok" : "bad"}"><b>${picked === q.a ? "Pravilno." : "Ne čisto."}</b> ${q.why}</div>
+      <button class="go big" id="qnext">${Q.i + 1 < Q.qs.length ? "Naprej →" : "Rezultat →"}</button>`}`;
+  box.querySelectorAll("[data-o]").forEach(b => b.onclick = () => { Q.ans[Q.i] = +b.dataset.o; renderQuizView(); });
+  const nx = $("#qnext"); if (nx) nx.onclick = () => { Q.i++; renderQuizView(); $("#drawer").scrollTop = 0; };
+}
+function renderQuizEnd() {
+  const box = $("#detail"), Q = quiz, right = Q.qs.filter((q, i) => Q.ans[i] === q.a).length;
+  const bySub = {};
+  Q.qs.forEach((q, i) => { const k = mkey(q.t, SUB[q.t][q.s]); (bySub[k] ||= { t: q.t, x: SUB[q.t][q.s], ok: 0, n: 0 }); bySub[k].n++; if (Q.ans[i] === q.a) bySub[k].ok++; });
+  if (!Q.saved) {
+    Object.entries(bySub).forEach(([k, r]) => { if (r.ok === r.n) { if (marks[k] !== "v") marks[k] = "z"; } else marks[k] = "n"; });
+    save("snou-marks", marks);
+    quizLog[TODAY_ISO] = (quizLog[TODAY_ISO] || 0) + 1; save("snou-quiz", quizLog);
+    Q.saved = true; renderLegend(); renderSubjects();
+  }
+  const pct = Math.round(right / Q.qs.length * 100), R = 52, C = 2 * Math.PI * R;
+  box.innerHTML = `
+    <div style="font-size:12px;color:var(--muted)">Kviz · ${Q.title}</div>
+    <h2>Rezultat</h2>
+    <svg viewBox="0 0 140 140" style="width:150px;display:block;margin:10px 0">
+      <circle cx="70" cy="70" r="${R}" fill="none" stroke="var(--line)" stroke-width="12"/>
+      <circle cx="70" cy="70" r="${R}" fill="none" stroke="${pct >= 70 ? "#7fcf86" : pct >= 40 ? "#f2b84b" : "#e8665a"}" stroke-width="12" stroke-linecap="round"
+        stroke-dasharray="${C * pct / 100} ${C}" transform="rotate(-90 70 70)"/>
+      <text x="70" y="78" text-anchor="middle" font-size="26" fill="var(--text)" font-family="Instrument Serif, serif">${right}/${Q.qs.length}</text></svg>
+    <div class="muted small" style="margin-bottom:10px">Podteme sem označila namesto tebe: vse prav = ✓ znam, kaj narobe = ✗ ne znam.</div>
+    ${Object.values(bySub).map(r => `<div class="srow ${r.ok === r.n ? "z" : ""}" style="--c:${subj[topic[r.t].s].color}"><span><span class="muted">${topic[r.t].name}:</span> ${r.x}</span>
+      <b class="mk ${r.ok === r.n ? "z" : "n"}">${r.ok === r.n ? "✓" : "✗"}</b><span class="muted small">${r.ok}/${r.n}</span></div>`).join("")}
+    <div class="todaybtns" style="margin-top:16px"><button class="go" id="again">Ponovi napačne</button><button class="go" id="qclose">Zapri</button></div>`;
+  const wrong = Q.qs.filter((q, i) => Q.ans[i] !== q.a);
+  $("#again").onclick = () => wrong.length ? startQuiz(wrong, Q.title + " · napačne") : closeDrawer();
+  $("#qclose").onclick = closeDrawer;
+}
+
+// ── poskusni kolokvij ──
+let test = null, testTimer = null;
+function canTest(s) {
+  const k = nextK(s);
+  return k && PAPERS.filter(p => p.s === s.id && p.k === k && PROBLEMS.some(q => q.paper === p.id)).length >= 2;
+}
+function startTest(sid) {
+  const s = subj[sid], k = nextK(s);
+  const papers = PAPERS.filter(p => p.s === sid && p.k === k && PROBLEMS.some(q => q.paper === p.id)).sort(() => Math.random() - .5);
+  const n = Math.max(...papers.map(p => p.tasks.length));
+  const probs = [];
+  for (let i = 1; i <= n; i++) {
+    const cand = papers.map(p => PROBLEMS.find(q => q.paper === p.id && q.n === i)).filter(Boolean);
+    if (cand.length) probs.push(cand[(i - 1) % cand.length]);
+  }
+  test = { sid, k, probs, start: Date.now(), dur: 90 * 60 * 1000, grades: probs.map(() => null), done: false };
+  renderTest(); $("#test").hidden = false; document.body.style.overflow = "hidden";
+  clearInterval(testTimer); testTimer = setInterval(tick, 1000);
+}
+function tick() {
+  if (!test || test.done) return;
+  const left = Math.max(0, test.dur - (Date.now() - test.start));
+  const el = $("#tclock"); if (el) el.textContent = `${Math.floor(left / 60000)}:${String(Math.floor(left / 1000) % 60).padStart(2, "0")}`;
+  const bar = $("#tbar"); if (bar) bar.style.width = (left / test.dur * 100) + "%";
+  if (left === 0) finishTest();
+}
+function finishTest() { test.done = true; clearInterval(testTimer); renderTest(); }
+function closeTest() { $("#test").hidden = true; document.body.style.overflow = ""; clearInterval(testTimer); test = null; renderSubjects(); }
+function renderTest() {
+  const T = test, s = subj[T.sid];
+  const pa = q => PAPERS.find(p => p.id === q.paper);
+  if (!T.done) {
+    $("#test").innerHTML = `<div class="tin" style="--c:${s.color}">
+      <div class="thd"><div><div class="muted small">Poskusni kolokvij</div><h2>${s.name} · ${T.k}. kolokvij</h2></div>
+        <div class="clock" id="tclock">90:00</div></div>
+      <div class="tbarw"><div id="tbar" style="background:${s.color}"></div></div>
+      <div class="muted small" style="margin:12px 0 4px">Reši na papir, kot na pravem kolokviju: 90 minut, en list A4 s formulami, vse odgovore utemelji. Naloge so iz različnih let.</div>
+      ${T.probs.map((q, i) => `<div class="tp"><div class="tn">${i + 1}. naloga <span class="muted small">· ${pa(q).year}</span></div><div class="tx">${q.text}</div></div>`).join("")}
+      <div class="todaybtns"><button class="go big" id="tfin">Končala sem →</button><button class="go" id="tquit">Prekini</button></div></div>`;
+    $("#tfin").onclick = finishTest; $("#tquit").onclick = closeTest; tick();
+    return;
+  }
+  const used = Math.min(T.dur, Date.now() - T.start), all = T.grades.every(g => g !== null);
+  const score = T.grades.reduce((a, g) => a + (g || 0), 0) / T.probs.length;
+  $("#test").innerHTML = `<div class="tin" style="--c:${s.color}">
+    <div class="thd"><div><div class="muted small">Poskusni kolokvij · ${Math.round(used / 60000)} min</div><h2>Oceni se sama</h2></div>
+      ${all ? `<div class="clock">${Math.round(score * 100)} %</div>` : ""}</div>
+    <div class="muted small" style="margin:8px 0 6px">Za vsako nalogo iskreno: koliko bi dobila na pravem kolokviju? Če ne veš, odpri nalogo na strani in mi pošlji, kar si napisala.</div>
+    ${T.probs.map((q, i) => `<div class="tp"><div class="tn">${i + 1}. naloga <span class="muted small">· ${pa(q).year} · ${topic[q.t].name}</span></div><div class="tx">${q.text}</div>
+      <div class="grade">${[[0, "Nič"], [.5, "Pol"], [1, "Vse"]].map(([v, l]) => `<button data-g="${i}|${v}" class="${T.grades[i] === v ? "on" : ""}">${l}</button>`).join("")}</div></div>`).join("")}
+    <div class="todaybtns"><button class="go big" id="tsave" ${all ? "" : "disabled"}>Shrani in zapri</button></div></div>`;
+  $("#test").querySelectorAll("[data-g]").forEach(b => b.onclick = () => { const [i, v] = b.dataset.g.split("|"); T.grades[+i] = +v; renderTest(); });
+  $("#tsave").onclick = () => {
+    tests.push({ s: T.sid, k: T.k, date: TODAY_ISO, score: Math.round(score * 100), min: Math.round(used / 60000) });
+    try { localStorage.setItem("snou-tests", JSON.stringify(tests)); } catch {}
+    T.probs.forEach((q, i) => { if (T.grades[i] === 1) solved[pkey(q)] = TODAY_ISO; });
+    save("snou-solved", solved);
+    quizLog[TODAY_ISO] = (quizLog[TODAY_ISO] || 0) + 2; save("snou-quiz", quizLog);
+    closeTest(); renderHeatmap();
+  };
+}
+
 // ── kaj zdaj: ena kartica na predmet ──
 let showAllPapers = {};
 function renderSubjects() {
@@ -700,7 +960,10 @@ function renderSubjects() {
       const rows = Object.entries(cnt).sort((a, b) => b[1] - a[1]);
       mid = `<div class="lbl">Kaj pride na ${k}. kolokvij</div>
         <ol class="asks">${rows.map(([id, m]) => `<li data-id="${id}"><span>${topic[id].name}</span><span class="m">${m === papers.length ? "vsako leto" : `${m} od ${papers.length} let`}</span></li>`).join("")}</ol>
-        <div class="muted small">Iz ${papers.length} preteklih kolokvijev.</div>`;
+        <div class="muted small">Iz ${papers.length} preteklih kolokvijev.</div>
+        ${canTest(s) ? `<button class="go" data-test="${s.id}" style="margin-top:12px">▶ Poskusni kolokvij · 90 min</button>` : ""}
+        ${(() => { const h = tests.filter(x => x.s === s.id && x.k === k).slice(-8); if (!h.length) return "";
+          return `<div class="thist">${h.map(x => `<div title="${x.date}: ${x.score} %"><span style="height:${Math.max(x.score, 4)}%;background:${s.color}"></span><i>${x.score}</i></div>`).join("")}</div>`; })()}`;
     } else if (next) {
       mid = `<div class="lbl">Kaj pride na ${k}. kolokvij</div><div class="muted small">Še ne vem. Pošlji mi pretekle kolokvije in ti pokažem.</div>`;
     } else {
@@ -728,6 +991,7 @@ function renderSubjects() {
     </div>`;
   }).join("");
   $("#subjects").querySelectorAll("[data-id]").forEach(b => b.onclick = () => { selected = null; select(b.dataset.id); });
+  $("#subjects").querySelectorAll("[data-test]").forEach(b => b.onclick = () => startTest(b.dataset.test));
   $("#subjects").querySelectorAll(".toggle").forEach(b => b.onclick = () => { showAllPapers[b.dataset.s] = !showAllPapers[b.dataset.s]; renderSubjects(); });
   renderPapers();
 }
