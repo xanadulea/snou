@@ -308,6 +308,44 @@
   .pdots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line); }
   .pdots i.ok { background: #7fcf86; } .pdots i.bad { background: #e8665a; }
   .probs li { display: block !important; }
+  /* pravila */
+  .rules { margin: 4px 0 0; padding: 0; list-style: none; counter-reset: r; display: grid; gap: 8px; }
+  .rules li { counter-increment: r; position: relative; padding: 11px 14px 11px 44px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; font-size: 15px; line-height: 1.7; }
+  .rules li::before { content: counter(r); position: absolute; left: 13px; top: 12px; width: 22px; height: 22px; border-radius: 6px; background: var(--c); color: #111; font: 700 12px/22px Inter, sans-serif; text-align: center; }
+  .rex { margin-top: 4px; font-size: 13.5px; color: var(--muted); }
+  .pazi { margin-top: 12px; border: 1.5px solid #e8665a; border-radius: 10px; padding: 12px 14px; background: #1d1416; }
+  .pz { color: #ff8a7d; font-weight: 700; font-size: 13px; letter-spacing: .04em; margin-bottom: 6px; }
+  .pzi { padding: 7px 0; border-top: 1px dashed #4a2a2d; font-size: 14.5px; line-height: 1.65; }
+  .pzi:first-of-type { border-top: 0; }
+  .symmini { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 6px; }
+  .symmini > div { display: flex; gap: 12px; align-items: center; padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-size: 13px; line-height: 1.35; }
+  .sg { font: 400 24px/1 "Instrument Serif", serif; color: var(--c); min-width: 34px; text-align: center; }
+  .search { width: 100%; margin: 16px 0 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; color: var(--text); font: 15px Inter, sans-serif; padding: 11px 14px; }
+  .search:focus { outline: none; border-color: var(--muted); }
+  .sgrp { margin-top: 22px; }
+  .symgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .symc { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+  .sgl { font: 400 34px/1.1 "Instrument Serif", serif; margin-bottom: 4px; }
+  .srd { font-weight: 600; font-size: 14px; }
+  .smn { font-size: 13px; color: var(--muted); }
+  .sex { font-size: 13px; margin-top: 4px; padding-top: 6px; border-top: 1px dashed var(--line); }
+  .stp { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .stp span { font-size: 11px; border: 1px solid var(--c); border-radius: 999px; padding: 1px 7px; cursor: pointer; color: var(--muted); }
+  .sheet { margin-top: 24px; columns: 2 300px; column-gap: 24px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .shh { column-span: all; font: 400 26px/1 "Instrument Serif", serif; margin-bottom: 12px; }
+  .shb { break-inside: avoid; margin-bottom: 12px; }
+  .sht { font-weight: 700; font-size: 13.5px; margin-bottom: 3px; }
+  .shr { font-size: 12.5px; line-height: 1.5; padding: 2px 0; }
+  .shr.pz { color: #ff8a7d; }
+  @media print {
+    body > *:not(.drawer) { display: none !important; }
+    .drawer { position: static !important; opacity: 1 !important; transform: none !important; background: #fff !important; }
+    .topbar, .noprint { display: none !important; }
+    #detail { padding: 0 !important; max-width: none !important; }
+    .sheet { background: #fff !important; color: #000 !important; border: 0 !important; padding: 0 !important; margin: 0 !important; columns: 2; }
+    .sht { color: #000 !important; } .shr { color: #000 !important; font-size: 9.5pt; } .shr.pz { color: #900 !important; }
+    @page { size: A4; margin: 12mm; }
+  }
   @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 </style>
 </head>
@@ -317,6 +355,7 @@
   <div>
     <h1>snou</h1>
     <div class="muted">Vse teme, vsi predmeti, vse povezave.</div>
+    <button class="go" id="symbtn" style="margin-top:12px">∑ Slovar simbolov</button>
   </div>
   <div class="exams" id="exams"></div>
 </header>
@@ -349,6 +388,7 @@
 <script src="sub.js"></script>
 <script src="kviz.js"></script>
 <script src="resitve.js"></script>
+<script src="pravila.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const NS = "http://www.w3.org/2000/svg";
@@ -594,6 +634,8 @@ function deepHtml(t, s) {
 function renderDetail() {
   const box = $("#detail");
   if (mode === "paper") return renderPaperView();
+  if (mode === "symbols") return renderSymbols();
+  if (mode === "sheet") return renderSheet();
   if (mode === "plan") return renderPlanView();
   if (mode === "quiz") return renderQuizView();
   if (!selected) { if (openSubj) renderSubjectView(); return; }
@@ -612,6 +654,8 @@ function renderDetail() {
       `<button data-i="${i}" class="${i === st ? "sel" : ""}" style="${i === st ? `background:${s.color};border-color:${s.color}` : ""}">${n}</button>`).join("")}
     </div>
     ${QUIZ.some(q => q.t === t.id) ? `<button class="go" data-quiz-topic="${t.id}">▶ Kviz · ${QUIZ.filter(q => q.t === t.id).length} vprašanj</button>` : ""}
+    ${rulesHtml(t.id)}
+    ${symsHtml(t.id)}
     ${SUB[t.id] ? `<div class="sec">Kaj je v tej temi · znaš ${tc.z}/${tc.all}</div>${markLegend}${subRows(t)}` : ""}
     ${(() => { const sp = support(t.id); return sp.length && (status[t.id] ?? 0) < 2 ? `
     <div class="sec">Kar že znaš, ti pomaga tukaj</div>
@@ -807,6 +851,56 @@ function support(id) {
     .map(x => ({ ...x, v: status[x.o.id] }));
 }
 const ready = id => (status[id] ?? 0) < 2 && support(id).length > 0;
+
+// ── pravila in simboli ──
+function rulesHtml(tid) {
+  const R = RULES[tid]; if (!R) return "";
+  const ok = R.filter(r => !r[2]), bad = R.filter(r => r[2]);
+  return `<div class="sec">Pravila · ${R.length}</div>
+    <ol class="rules">${ok.map(([r, ex]) => `<li><div>${r}</div>${ex ? `<div class="rex">${ex}</div>` : ""}</li>`).join("")}</ol>
+    ${bad.length ? `<div class="pazi"><div class="pz">⚠ Pazi</div>${bad.map(([r, ex]) => `<div class="pzi"><div>${r}</div>${ex ? `<div class="rex">${ex}</div>` : ""}</div>`).join("")}</div>` : ""}`;
+}
+function symsHtml(tid) {
+  const S = SYMBOLS.filter(x => x[5].includes(tid)); if (!S.length) return "";
+  return `<div class="sec">Simboli v tej temi</div><div class="symmini">${S.map(([g, rd, mn]) =>
+    `<div><span class="sg">${g}</span><span><b>${rd}</b>${mn ? `<br><span class="muted">${mn}</span>` : ""}</span></div>`).join("")}</div>`;
+}
+let symQ = "";
+function openSymbols() { mode = "symbols"; selected = null; openSubj = null; refreshDrawer(true); }
+function renderSymbols() {
+  const box = $("#detail"); box.style.setProperty("--c", "#d9d4ff");
+  const q = symQ.toLowerCase().trim();
+  const L = SYMBOLS.filter(x => !q || x.slice(0, 4).join(" ").toLowerCase().includes(q) || x[5].some(id => topic[id].name.toLowerCase().includes(q)));
+  const groups = [...new Set(L.map(x => x[4]))];
+  box.innerHTML = `
+    <div style="font-size:12.5px;color:var(--muted)">Za vse predmete</div>
+    <h2>Slovar simbolov</h2>
+    <div class="muted small">Kaj pomeni vsak znak in kako ga prebereš na glas. Spodaj pod vsakim je primer.</div>
+    <input id="symq" class="search" placeholder="Išči: vektor, ∈, limita, tlak …" value="${symQ.replace(/"/g, "&quot;")}">
+    ${groups.map(g => `<div class="sgrp"><div class="lbl">${g}</div><div class="symgrid">${L.filter(x => x[4] === g).map(([sy, rd, mn, ex, , ts]) => `
+      <div class="symc"><div class="sgl">${sy}</div><div class="srd">${rd}</div>${mn ? `<div class="smn">${mn}</div>` : ""}${ex ? `<div class="sex">${ex}</div>` : ""}
+        <div class="stp">${ts.slice(0, 3).map(id => `<span data-open-t="${id}" style="--c:${subj[topic[id].s].color}">${topic[id].name}</span>`).join("")}</div></div>`).join("")}</div></div>`).join("") || `<div class="muted" style="margin-top:20px">Nič ne najdem.</div>`}`;
+  const inp = $("#symq");
+  inp.oninput = () => { symQ = inp.value; renderSymbols(); const i = $("#symq"); i.focus(); i.setSelectionRange(i.value.length, i.value.length); };
+  box.querySelectorAll("[data-open-t]").forEach(b => b.onclick = () => { selected = null; select(b.dataset.openT); });
+}
+let sheetSubj = null;
+function openSheet(sid) { mode = "sheet"; sheetSubj = sid; selected = null; openSubj = null; refreshDrawer(true); }
+function renderSheet() {
+  const box = $("#detail"), s = subj[sheetSubj], k = nextK(s);
+  const ts = TOPICS.filter(t => t.s === s.id && (!k || !TOPICS.some(x => x.s === s.id && x.k) || (t.k || []).includes(k)) && RULES[t.id]);
+  box.style.setProperty("--c", s.color);
+  box.innerHTML = `
+    <div class="noprint"><div style="font-size:12.5px;color:${s.color}">${s.name}</div>
+      <h2>List s formulami${k ? ` · ${k}. kolokvij` : ""}</h2>
+      <div class="muted small">Vsa pravila za ta kolokvij na enem mestu. Natisni (A4) ali prepiši na svoj list. Najbolje je, da ga napišeš sama: med pisanjem se naučiš.</div>
+      <div class="todaybtns"><button class="go big" onclick="window.print()">🖨 Natisni</button></div></div>
+    <div class="sheet">
+      <div class="shh">${s.name}${k ? ` · ${k}. kolokvij` : ""}</div>
+      ${ts.map(t => `<div class="shb"><div class="sht" style="color:${s.color}">${t.name}</div>
+        ${RULES[t.id].map(([r, ex, pz]) => `<div class="shr ${pz ? "pz" : ""}">${pz ? "⚠ " : ""}${r}</div>`).join("")}</div>`).join("")}
+    </div>`;
+}
 
 // ── rešitve korak za korakom ──
 function solBlock(p) {
@@ -1056,7 +1150,7 @@ function renderSubjects() {
       mid = `<div class="lbl">Kaj pride na ${k}. kolokvij</div>
         <ol class="asks">${rows.map(([id, m]) => `<li data-id="${id}"><span>${topic[id].name}</span><span class="m">${m === papers.length ? "vsako leto" : `${m} od ${papers.length} let`}</span></li>`).join("")}</ol>
         <div class="muted small">Iz ${papers.length} preteklih kolokvijev.</div>
-        ${canTest(s) ? `<button class="go" data-test="${s.id}" style="margin-top:12px">▶ Poskusni kolokvij · 90 min</button>` : ""}
+        <div class="todaybtns">${canTest(s) ? `<button class="go" data-test="${s.id}">▶ Poskusni kolokvij · 90 min</button>` : ""}<button class="go" data-sheet="${s.id}">📄 List s formulami</button></div>
         ${(() => { const h = tests.filter(x => x.s === s.id && x.k === k).slice(-8); if (!h.length) return "";
           return `<div class="thist">${h.map(x => `<div title="${x.date}: ${x.score} %"><span style="height:${Math.max(x.score, 4)}%;background:${s.color}"></span><i>${x.score}</i></div>`).join("")}</div>`; })()}`;
     } else if (next) {
@@ -1093,11 +1187,13 @@ function renderSubjects() {
   $("#subjects").querySelectorAll("[data-id]").forEach(b => b.onclick = () => { selected = null; select(b.dataset.id); });
   $("#subjects").querySelectorAll("[data-test]").forEach(b => b.onclick = () => startTest(b.dataset.test));
   $("#subjects").querySelectorAll("[data-paper]").forEach(b => b.onclick = () => openPaper(b.dataset.paper));
+  $("#subjects").querySelectorAll("[data-sheet]").forEach(b => b.onclick = () => openSheet(b.dataset.sheet));
   $("#subjects").querySelectorAll(".toggle").forEach(b => b.onclick = () => { showAllPapers[b.dataset.s] = !showAllPapers[b.dataset.s]; renderSubjects(); });
   renderPapers();
 }
 
 $("#scrim").onclick = closeDrawer;
+$("#symbtn").onclick = openSymbols;
 $("#close").onclick = closeDrawer;
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
 
