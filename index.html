@@ -346,6 +346,47 @@
     .sht { color: #000 !important; } .shr { color: #000 !important; font-size: 9.5pt; } .shr.pz { color: #900 !important; }
     @page { size: A4; margin: 12mm; }
   }
+  /* zapiski */
+  .notesbtn { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 14px; font: 600 14px Inter, sans-serif; color: #111; background: var(--c); border: 0; border-radius: 10px; padding: 10px 14px; cursor: pointer; }
+  .notesbtn span { font-weight: 500; font-size: 12.5px; opacity: .75; }
+  .notego { margin: 10px 0 4px; }
+  .nlist { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+  .ncard { display: flex; align-items: center; gap: 16px; text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; color: var(--text); cursor: pointer; font: 15px Inter, sans-serif; }
+  .ncard:hover { border-color: var(--c); }
+  .nnum { font: 400 30px/1 "Instrument Serif", serif; color: var(--c); width: 26px; }
+  .nbody { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .nst { color: var(--muted); font-size: 13px; }
+  .ncard.read .nst { color: #7fcf86; }
+  .lnk { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; margin: 16px 0 6px; }
+  .seg button { font: 13px Inter, sans-serif; border: 0; background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+  .seg button.on { background: var(--c); color: #111; font-weight: 600; }
+  .nintro { font-size: 17px; line-height: 1.65; margin: 14px 0; color: #dcd9d2; }
+  .ntoc { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .ntoc a { font-size: 12.5px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; text-decoration: none; }
+  .ntoc a:hover { color: var(--text); border-color: var(--c); }
+  .npart { border-top: 1px solid var(--line); padding: 26px 0 10px; }
+  .npart h3 { display: flex; align-items: center; gap: 12px; font: 400 26px/1.15 "Instrument Serif", serif; margin: 0 0 12px; }
+  .npart h3 span { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--c); color: #111; font: 700 14px/30px Inter, sans-serif; text-align: center; }
+  .npart p { font-size: 16px; line-height: 1.75; margin: 0 0 12px; }
+  .npic { margin: 14px 0; padding: 14px; background: var(--panel); border-radius: 12px; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
+  .vrow { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .vrow svg { width: 190px !important; }
+  .zv { margin: 16px 0; padding: 14px 18px 16px; border: 2px dashed var(--c); border-radius: 12px; font-size: 16.5px; line-height: 1.9; background: color-mix(in srgb, var(--c) 6%, transparent); }
+  .zvl { font-size: 12px; font-weight: 700; letter-spacing: .06em; color: var(--c); margin-bottom: 4px; }
+  .zvonly { margin: 14px 0; padding: 14px 18px; border: 2px dashed var(--c); border-radius: 12px; font-size: 17px; line-height: 1.95; }
+  .zvh { font-weight: 600; font-size: 14px; color: var(--c); margin-bottom: 4px; }
+  .nex { margin: 14px 0; padding: 14px 18px; background: var(--panel); border-radius: 12px; border-left: 3px solid var(--c); }
+  .nq { font-size: 15.5px; line-height: 1.75; margin-bottom: 6px; }
+  .nex ol, .nans ol { margin: 6px 0 0; padding-left: 22px; font-size: 15px; line-height: 1.85; }
+  .nex ol li::marker, .nans ol li::marker { color: var(--c); font-weight: 600; }
+  .ntask { padding: 14px 0; border-top: 1px dashed var(--line); }
+  .nans { margin-top: 10px; }
+  .tt { border-collapse: collapse; margin: 8px 0; font-size: 14px; }
+  .tt th { padding: 6px 12px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .tt td { padding: 5px 12px; text-align: center; font-weight: 700; }
+  .tt .t1 { color: #7fcf86; } .tt .t0 { color: #e8665a; opacity: .8; }
+  .doneb { background: #7fcf86 !important; border-color: #7fcf86 !important; color: #111 !important; }
   @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 </style>
 </head>
@@ -389,6 +430,7 @@
 <script src="kviz.js"></script>
 <script src="resitve.js"></script>
 <script src="pravila.js"></script>
+<script src="zapiski.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const NS = "http://www.w3.org/2000/svg";
@@ -635,6 +677,8 @@ function renderDetail() {
   const box = $("#detail");
   if (mode === "paper") return renderPaperView();
   if (mode === "symbols") return renderSymbols();
+  if (mode === "notes") return renderNotesList();
+  if (mode === "note") return renderNote();
   if (mode === "sheet") return renderSheet();
   if (mode === "plan") return renderPlanView();
   if (mode === "quiz") return renderQuizView();
@@ -654,6 +698,7 @@ function renderDetail() {
       `<button data-i="${i}" class="${i === st ? "sel" : ""}" style="${i === st ? `background:${s.color};border-color:${s.color}` : ""}">${n}</button>`).join("")}
     </div>
     ${QUIZ.some(q => q.t === t.id) ? `<button class="go" data-quiz-topic="${t.id}">▶ Kviz · ${QUIZ.filter(q => q.t === t.id).length} vprašanj</button>` : ""}
+    ${NOTES.filter(n => n.t === t.id).map(n => `<button class="go notego" data-note="${n.id}">📓 Zapiski: ${n.title}</button>`).join(" ")}
     ${rulesHtml(t.id)}
     ${symsHtml(t.id)}
     ${SUB[t.id] ? `<div class="sec">Kaj je v tej temi · znaš ${tc.z}/${tc.all}</div>${markLegend}${subRows(t)}` : ""}
@@ -687,6 +732,7 @@ function renderDetail() {
     renderDiagram(); renderDetail(); renderLegend(); renderSubjects();
   });
   bindSol(box, renderDetail);
+  box.querySelectorAll("[data-note]").forEach(b => b.onclick = () => openNote(b.dataset.note));
   box.querySelectorAll(".conns li").forEach(li => li.onclick = () => { selected = null; select(li.dataset.id); });
   bindMarks(box);
   box.querySelectorAll("[data-quiz-topic]").forEach(b => b.onclick = () => startQuiz(QUIZ.filter(q => q.t === b.dataset.quizTopic), t.name));
@@ -851,6 +897,63 @@ function support(id) {
     .map(x => ({ ...x, v: status[x.o.id] }));
 }
 const ready = id => (status[id] ?? 0) < 2 && support(id).length > 0;
+
+// ── zapiski ──
+let readN = load("snou-read"), curNote = null, noteSubj = null, notebookOnly = false;
+const taskOpen = {};
+function openNotes(sid) { mode = "notes"; noteSubj = sid; selected = null; openSubj = null; refreshDrawer(true); }
+function openNote(id) { mode = "note"; curNote = id; selected = null; openSubj = null; refreshDrawer(true); }
+function renderNotesList() {
+  const box = $("#detail"), s = subj[noteSubj], L = NOTES.filter(n => n.s === noteSubj);
+  box.style.setProperty("--c", s.color);
+  box.innerHTML = `
+    <div style="font-size:12.5px;color:${s.color}">${s.name}</div>
+    <h2>Zapiski</h2>
+    <div class="muted small">Lekcije po vrsti, kot gredo vaje. Vsaka razloži, zakaj nekaj velja, ima sliko, primer in naloge z vaj. Kar je v okvirčku ✎, prepiši v zvezek.</div>
+    <div class="nlist">${L.map((n, i) => `<button class="ncard ${readN[n.id] ? "read" : ""}" data-note="${n.id}">
+      <span class="nnum">${i + 1}</span><span class="nbody"><b>${n.title}</b><span class="muted small">${n.vaje} · ${n.parts.length} delov · ${n.tasks.length} nalog</span></span>
+      <span class="nst">${readN[n.id] ? "✓ prebrano" : "→"}</span></button>`).join("")}</div>
+    <div class="muted small" style="margin-top:16px">Naslednje lekcije (števila, kompleksna, funkcije …) dodam po vrsti.</div>`;
+  box.querySelectorAll("[data-note]").forEach(b => b.onclick = () => openNote(b.dataset.note));
+}
+function renderNote() {
+  const box = $("#detail"), n = NOTES.find(x => x.id === curNote), s = subj[n.s];
+  const L = NOTES.filter(x => x.s === n.s), i = L.indexOf(n);
+  box.style.setProperty("--c", s.color);
+  const part = (pt, j) => notebookOnly ? (pt.zv ? `<div class="zvonly"><div class="zvh">${j + 1}. ${pt.h}</div>${pt.zv}</div>` : "") : `
+    <section class="npart" id="np${j}">
+      <h3><span>${j + 1}</span>${pt.h}</h3>
+      ${(pt.p || []).map(x => `<p>${x}</p>`).join("")}
+      ${pt.pic ? `<div class="npic">${pt.pic}</div>` : ""}
+      ${pt.warn ? `<div class="pazi"><div class="pz">⚠ Pazi</div><div class="pzi">${pt.warn}</div></div>` : ""}
+      ${pt.zv ? `<div class="zv"><div class="zvl">✎ V zvezek</div>${pt.zv}</div>` : ""}
+      ${pt.ex ? `<div class="nex"><div class="lbl">Primer</div><div class="nq">${pt.ex.q}</div><ol>${pt.ex.steps.map(x => `<li>${x}</li>`).join("")}</ol></div>` : ""}
+    </section>`;
+  box.innerHTML = `
+    <div style="font-size:12.5px;color:${s.color}"><span class="lnk" id="tolist">${s.name} · Zapiski</span> · lekcija ${i + 1} od ${L.length}</div>
+    <h2>${n.title}</h2>
+    <div class="muted small">${n.vaje}${n.t ? ` · tema <span class="lnk" data-open-t="${n.t}">${topic[n.t].name}</span>` : ""}</div>
+    <div class="seg"><button class="${notebookOnly ? "" : "on"}" data-nb="0">Celotna razlaga</button><button class="${notebookOnly ? "on" : ""}" data-nb="1">✎ Samo za zvezek</button></div>
+    ${notebookOnly ? "" : `<p class="nintro">${n.intro}</p><div class="ntoc">${n.parts.map((pt, j) => `<a href="#np${j}">${j + 1}. ${pt.h}</a>`).join("")}</div>`}
+    ${n.parts.map(part).join("")}
+    ${notebookOnly ? "" : `<section class="npart"><h3><span>✎</span>Poskusi sama</h3><div class="muted small">Naloge z lista vaj. Najprej reši na papir, potem odpri rešitev.</div>
+      ${n.tasks.map((t, k) => { const key = `${n.id}#${k}`, o = taskOpen[key];
+        return `<div class="ntask"><div class="nq"><b>${k + 1}.</b> ${t.q}</div>
+          <button class="go" data-task="${key}">${o ? "Skrij rešitev" : "Pokaži rešitev"}</button>
+          ${o ? `<div class="nans">${t.steps ? `<ol>${t.steps.map(x => `<li>${x}</li>`).join("")}</ol>` : ""}<div class="answer"><span class="lbl" style="margin:0">Rešitev</span><div>${t.a}</div></div></div>` : ""}</div>`; }).join("")}</section>`}
+    <div class="papfoot">
+      ${i > 0 ? `<button class="go" data-note="${L[i - 1].id}">← ${L[i - 1].title}</button>` : "<span></span>"}
+      <button class="go big ${readN[n.id] ? "doneb" : ""}" id="markread">${readN[n.id] ? "✓ Prebrano" : "Prebrala sem ✓"}</button>
+      ${i < L.length - 1 ? `<button class="go" data-note="${L[i + 1].id}">${L[i + 1].title} →</button>` : "<span></span>"}
+    </div>`;
+  box.querySelectorAll("[data-note]").forEach(b => b.onclick = () => openNote(b.dataset.note));
+  box.querySelectorAll("[data-task]").forEach(b => b.onclick = () => { taskOpen[b.dataset.task] = !taskOpen[b.dataset.task]; keepScroll(renderNote); });
+  box.querySelectorAll("[data-nb]").forEach(b => b.onclick = () => { notebookOnly = b.dataset.nb === "1"; renderNote(); });
+  box.querySelectorAll("[data-open-t]").forEach(b => b.onclick = () => { selected = null; select(b.dataset.openT); });
+  box.querySelectorAll(".ntoc a").forEach(a => a.onclick = e => { e.preventDefault(); const el = box.querySelector(a.getAttribute("href")); $("#drawer").scrollTo({ top: el.offsetTop - 70, behavior: "smooth" }); });
+  $("#tolist").onclick = () => openNotes(n.s);
+  $("#markread").onclick = () => { readN[n.id] ? delete readN[n.id] : (readN[n.id] = TODAY_ISO); save("snou-read", readN); keepScroll(renderNote); renderSubjects(); };
+}
 
 // ── pravila in simboli ──
 function rulesHtml(tid) {
@@ -1164,6 +1267,7 @@ function renderSubjects() {
       <div>
         <div class="nm"><span class="dot"></span>${s.name}</div>
         ${next ? `<div class="big">${days === 0 ? "danes" : days + " dni"}</div><div class="muted small">do ${k}. kolokvija · ${fmt(new Date(next + "T00:00"), {day: "numeric", month: "long"})}</div>` : ""}
+        ${NOTES.some(x => x.s === s.id) ? `<button class="notesbtn" data-notes="${s.id}">📓 Zapiski <span>${NOTES.filter(x => x.s === s.id && readN[x.id]).length}/${NOTES.filter(x => x.s === s.id).length}</span></button>` : ""}
         <div class="bar"><div style="width:${c[2] / n * 100}%"></div><div style="width:${c[1] / n * 100}%;opacity:.45"></div></div>
         <div class="muted small">${c[2]} od ${n} tem znaš${c[1] ? ` · ${c[1]} vadiš` : ""}</div>
 
@@ -1188,6 +1292,7 @@ function renderSubjects() {
   $("#subjects").querySelectorAll("[data-test]").forEach(b => b.onclick = () => startTest(b.dataset.test));
   $("#subjects").querySelectorAll("[data-paper]").forEach(b => b.onclick = () => openPaper(b.dataset.paper));
   $("#subjects").querySelectorAll("[data-sheet]").forEach(b => b.onclick = () => openSheet(b.dataset.sheet));
+  $("#subjects").querySelectorAll("[data-notes]").forEach(b => b.onclick = () => openNotes(b.dataset.notes));
   $("#subjects").querySelectorAll(".toggle").forEach(b => b.onclick = () => { showAllPapers[b.dataset.s] = !showAllPapers[b.dataset.s]; renderSubjects(); });
   renderPapers();
 }
