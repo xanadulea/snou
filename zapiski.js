@@ -52,6 +52,24 @@ function sqpic() {
     <text x="60" y="140" text-anchor="middle" font-size="14" fill="var(--text)">ab</text><text x="135" y="140" text-anchor="middle" font-size="14" fill="var(--text)">b²</text></svg>`;
 }
 
+
+function mapPic(a, b, c, d, label) {
+  // slika enotskega kvadrata pri matriki [[a, b], [c, d]]: e1 → (a, c), e2 → (b, d)
+  const S = 34, O = [120, 120], P = (x, y) => [O[0] + x * S, O[1] - y * S];
+  let g = "";
+  for (let i = -3; i <= 3; i++) g += `<line x1="${P(i, -3)[0]}" y1="${P(i, -3)[1]}" x2="${P(i, 3)[0]}" y2="${P(i, 3)[1]}" stroke="var(--line)"/><line x1="${P(-3, i)[0]}" y1="${P(-3, i)[1]}" x2="${P(3, i)[0]}" y2="${P(3, i)[1]}" stroke="var(--line)"/>`;
+  const sq = [P(0, 0), P(1, 0), P(1, 1), P(0, 1)].map(p => p.join(",")).join(" ");
+  const im = [P(0, 0), P(a, c), P(a + b, c + d), P(b, d)].map(p => p.join(",")).join(" ");
+  const ar = (x, y, col, t) => { const [X, Y] = P(x, y); return `<line x1="${O[0]}" y1="${O[1]}" x2="${X}" y2="${Y}" stroke="${col}" stroke-width="3"/><circle cx="${X}" cy="${Y}" r="4" fill="${col}"/><text x="${X + 6}" y="${Y - 6}" font-size="12" fill="${col}">${t}</text>`; };
+  return `<svg class="mp" viewBox="0 0 240 250" style="width:100%;max-width:250px">${g}
+    <line x1="${P(-3, 0)[0]}" y1="${O[1]}" x2="${P(3, 0)[0]}" y2="${O[1]}" stroke="var(--faint)" stroke-width="1.5"/><line x1="${O[0]}" y1="${P(0, -3)[1]}" x2="${O[0]}" y2="${P(0, 3)[1]}" stroke="var(--faint)" stroke-width="1.5"/>
+    <polygon points="${sq}" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/>
+    <polygon points="${im}" fill="#5ec2d6" fill-opacity=".25" stroke="#5ec2d6"/>
+    ${ar(a, c, "#f2b84b", "Ae₁")}${ar(b, d, "#e8665a", "Ae₂")}
+    <text x="120" y="246" text-anchor="middle" font-size="13" fill="var(--text)">${label}</text></svg>`;
+}
+const M2 = (a, b, c, d) => mx([[a, b], [c, d]]);
+
 const NOTES = [
   // ═══════════════════════════════════════════════
   { id: "z-ponavljanje", s: "mat", t: null, title: "Ponavljanje: potence, koreni, ulomki", vaje: "Vaje 1 · Naloge za ponavljanje",
@@ -238,5 +256,65 @@ const NOTES = [
       { q: "Zapiši in zanikaj: »Za vsako celo število velja: če je deljivo s 6, je deljivo z 2 in s 3.« &nbsp;(4d)", a: "∀n ∈ ℤ: (6 | n ⇒ 2 | n ∧ 3 | n). &nbsp;Zanikanje: ∃n ∈ ℤ: 6 | n ∧ (2 ∤ n ∨ 3 ∤ n).", steps: ["¬(a ⇒ b) ≡ a ∧ ¬b", "¬(2 | n ∧ 3 | n) ≡ 2 ∤ n ∨ 3 ∤ n (De Morgan)"] },
       { q: "Zapiši: »Za vsak ε > 0 obstaja N ∈ ℕ, da za vsak n > N velja 1/n < ε.« &nbsp;(4f) &nbsp;To je definicija limite 1/n → 0!", a: "∀ε > 0 ∃N ∈ ℕ ∀n ∈ ℕ: (n > N ⇒ 1/n < ε). &nbsp;Zanikanje: ∃ε > 0 ∀N ∈ ℕ ∃n ∈ ℕ: n > N ∧ 1/n ≥ ε." },
       { q: "Z besedami: ∀x ∈ ℝ ∀y ∈ ℝ: (xy = 0 ⇒ x = 0 ∨ y = 0). &nbsp;(5c)", a: "Če je produkt dveh realnih števil 0, je vsaj eno od njiju 0." },
+    ] },
+
+  // ═══════════════════════════════════════════════
+  { id: "z-la-matrike", s: "la", t: "preslikave", title: "Matrike in linearne preslikave ℝ² → ℝ²", vaje: "Predavanje 19. 10. · izpitno vprašanje 2",
+    intro: "Linearna preslikava je pravilo, ki ravnino »preoblikuje«: zavrti, raztegne, zrcali, nagne. Matrika je samo zapis tega pravila v štirih številih. Ko to enkrat vidiš na sliki, je vse ostalo (množenje, inverz, determinanta) logično.",
+    parts: [
+      { h: "Kaj je matrika in kako računamo z njo",
+        p: ["m × n matrika je tabela števil z m vrsticami in n stolpci. Najprej vedno povemo vrstice, potem stolpce.",
+            "<b>Seštevanje</b> in <b>množenje s skalarjem</b> gresta po elementih, kot pri vektorjih. Seštevaš lahko samo matriki enakih dimenzij.",
+            "<b>Transponirana</b> matrika Aᵀ: vrstice postanejo stolpci. Prva vrstica postane prvi stolpec."],
+        zv: `A = ${M2("a₁₁", "a₁₂", "a₂₁", "a₂₂")} &nbsp;&nbsp; aᵢⱼ = element v i-ti vrstici, j-tem stolpcu<br>(A + B)ᵢⱼ = aᵢⱼ + bᵢⱼ &nbsp;&nbsp; (λA)ᵢⱼ = λaᵢⱼ &nbsp;&nbsp; (Aᵀ)ᵢⱼ = aⱼᵢ`,
+        ex: { q: `Aᵀ za A = ${mx([[1, 2, 3], [4, 5, 6]])}`, steps: [`A je 2 × 3, Aᵀ je 3 × 2: ${mx([[1, 4], [2, 5], [3, 6]])}`] } },
+      { h: "Množenje matrik: vrstica × stolpec",
+        p: ["Element produkta AB v i-ti vrstici in j-tem stolpcu dobiš tako, da vzameš <b>i-to vrstico A</b> in <b>j-ti stolpec B</b>, zmnožiš istoležne in sešteješ. Tako kot skalarni produkt.",
+            "Zato mora biti vrstica A enako dolga kot stolpec B: (m × <b>n</b>) · (<b>n</b> × p) = m × p. Notranji števili se morata ujemati."],
+        zv: "(AB)ᵢⱼ = i-ta vrstica A · j-ti stolpec B &nbsp;&nbsp; (m × n)(n × p) = m × p<br>AB ≠ BA (v splošnem) &nbsp;&nbsp; AI = IA = A",
+        ex: { q: `${M2(1, 2, 0, 1)} · ${M2(3, 0, 1, 2)}`, steps: [
+          "1. vrstica × 1. stolpec: 1 · 3 + 2 · 1 = 5; &nbsp;1. vrstica × 2. stolpec: 1 · 0 + 2 · 2 = 4",
+          "2. vrstica × 1. stolpec: 0 · 3 + 1 · 1 = 1; &nbsp;2. vrstica × 2. stolpec: 0 · 0 + 1 · 2 = 2",
+          `AB = ${M2(5, 4, 1, 2)}. &nbsp;Obratno BA = ${M2(3, 6, 1, 4)}, torej AB ≠ BA.`] },
+        warn: "Vrstni red pri množenju je pomemben: AB in BA sta navadno različni." },
+      { h: "Linearna preslikava",
+        p: ["Preslikava T: ℝ² → ℝ² vsaki točki (vektorju) priredi novo točko. <b>Linearna</b> je, če »spoštuje« seštevanje in množenje s skalarjem: slika vsote je vsota slik, slika dvakrat daljšega vektorja je dvakrat daljša.",
+            "Posledica: T(0) = 0, saj T(0) = T(0 · v) = 0 · T(v) = 0. Če preslikava premakne izhodišče, ni linearna. To je najhitrejši test.",
+            "Geometrijsko: premice ostanejo premice, vzporedne ostanejo vzporedne, izhodišče ostane na mestu. Mreža se le nagne, raztegne ali zavrti."],
+        zv: "T je linearna ⇔ T(u + v) = T(u) + T(v) in T(λv) = λT(v)<br>posledica: T(0) = 0",
+        ex: { q: "Je T(x, y) = (x + 1, y) linearna?", steps: ["T(0, 0) = (1, 0) ≠ (0, 0) ⇒ NI linearna (premakne izhodišče)."] } },
+      { h: "Matrika preslikave: kam gresta e₁ in e₂",
+        p: ["To je najpomembnejša ideja. Vsak vektor je (x, y) = x · e₁ + y · e₂, kjer e₁ = (1, 0) in e₂ = (0, 1). Zaradi linearnosti je T(x, y) = x · T(e₁) + y · T(e₂). Torej: <b>če veš, kam gresta e₁ in e₂, veš vse.</b>",
+            "Zato matriko preslikave sestaviš tako, da v <b>prvi stolpec</b> zapišeš T(e₁), v <b>drugi stolpec</b> T(e₂). Na sliki: črtkani kvadrat se preslika v modri paralelogram, njegovi stranici sta ravno stolpca matrike."],
+        pic: `<div class="vrow">${mapPic(2, 1, 0, 1, "A = [[2, 1], [0, 1]] · nagib")}${mapPic(0, -1, 1, 0, "[[0, −1], [1, 0]] · rotacija 90°")}${mapPic(1, 0, 0, -1, "[[1, 0], [0, −1]] · zrcaljenje čez x")}${mapPic(1, 0, 0, 0, "[[1, 0], [0, 0]] · projekcija na x")}</div>`,
+        zv: `[T] = [ T(e₁) &nbsp;T(e₂) ] (stolpca!) &nbsp;&nbsp; T(x, y) = [T] ${mx([["x"], ["y"]])}<br>v izbrani bazi ima T natanko eno matriko; v drugi bazi drugo`,
+        ex: { q: "Matrika preslikave T(x, y) = (2x − y, x + 3y)", steps: [
+          "T(e₁) = T(1, 0) = (2, 1) → prvi stolpec",
+          "T(e₂) = T(0, 1) = (−1, 3) → drugi stolpec",
+          `[T] = ${M2(2, -1, 1, 3)}. Hitreje: koeficienti pri x v prvi stolpec, pri y v drugi.`] } },
+      { h: "Kompozitum = produkt matrik",
+        p: ["Če najprej narediš T in nato S, je skupna preslikava S ∘ T. Njena matrika je [S] · [T]. Pozor na vrstni red: kar narediš <b>prvo</b>, je <b>desno</b>, ker matrika deluje na vektor z leve: S(T(v)) = [S][T]v.",
+            "Zato množenje matrik ni komutativno: »najprej zavrti, potem zrcali« ni isto kot »najprej zrcali, potem zavrti«."],
+        zv: "[S ∘ T] = [S] · [T] &nbsp;&nbsp; (najprej T, zato je T desno)",
+        ex: { q: "Najprej rotacija za 90°, nato zrcaljenje čez os x.", steps: [
+          `[S][T] = ${M2(1, 0, 0, -1)} · ${M2(0, -1, 1, 0)} = ${M2(0, -1, -1, 0)}`,
+          "Preverba: e₁ = (1, 0) → rotacija → (0, 1) → zrcaljenje → (0, −1). To je prvi stolpec ✓"] } },
+      { h: "Obrnljivost in determinanta",
+        p: ["Preslikava je <b>obrnljiva</b>, če jo lahko »razveljaviš«. Projekcija na x os ni obrnljiva: točki (3, 1) in (3, 5) se preslikata v isto (3, 0), in iz (3, 0) ne veš, od kod si prišel.",
+            "<b>Determinanta</b> pove, kolikokrat se poveča ploščina: enotski kvadrat (ploščina 1) se preslika v paralelogram s ploščino |det A|. Če je det A = 0, se ravnina sploščí v premico ali točko, in tega ne moreš razveljaviti.",
+            "Za T: ℝ² → ℝ² so naslednje trditve enakovredne: T je injektivna ⇔ T je surjektivna ⇔ ker T = {0} ⇔ det A ≠ 0 ⇔ A je obrnljiva. Pri preslikavi ravnine nase je torej dovolj preveriti eno."],
+        zv: `det ${M2("a", "b", "c", "d")} = ad − bc &nbsp;&nbsp; A⁻¹ = ${fr(1, "ad − bc")} ${M2("d", "−b", "−c", "a")} (obstaja ⇔ det ≠ 0)<br>T: ℝ² → ℝ²: injektivna ⇔ surjektivna ⇔ det ≠ 0<br>ker T = {v ; T(v) = 0}, &nbsp;im T = {T(v)}`,
+        ex: { q: `Inverz ${M2(3, 1, 5, 2)}`, steps: [
+          "det = 3 · 2 − 1 · 5 = 1 ≠ 0 ⇒ obrnljiva",
+          `zamenjaj diagonalo, spremeni predznak izven nje, deli z det: ${M2(2, -1, -5, 3)}`,
+          `Preverba: ${M2(3, 1, 5, 2)} · ${M2(2, -1, -5, 3)} = ${M2(1, 0, 0, 1)} ✓`] } },
+    ],
+    tasks: [
+      { q: `Izračunaj ${M2(1, 2, 3, 4)} · ${M2(0, 1, 1, 0)}. Kaj desna matrika naredi s stolpci?`, a: `${M2(2, 1, 4, 3)}: zamenja stolpca.` },
+      { q: `Je ${M2(2, 4, 1, 2)} obrnljiva?`, a: "Ne: det = 4 − 4 = 0. Stolpca (2, 1) in (4, 2) sta kolinearna, ravnina se sploščí v premico." },
+      { q: "Matrika projekcije na os x. Kaj sta jedro in slika?", a: `${M2(1, 0, 0, 0)}; ker = os y (vse točke (0, y) gredo v 0), im = os x. det = 0, ni obrnljiva.` },
+      { q: "Teoretično: zakaj ima vsaka linearna preslikava T(0) = 0?", a: "T(0) = T(0 · v) = 0 · T(v) = 0 (linearnost za skalar 0)." },
+      { q: "Teoretično: koliko matrik lahko priredimo dani linearni preslikavi?", a: "V vsaki izbrani bazi natanko eno. Ker baz je neskončno, je matrik neskončno, vse pa so med seboj povezane s prehodno matriko: B = P⁻¹AP." },
+      { q: "T(x, y) = (4x − 2y, x + y) (K1 2025): matrika, je obrnljiva, inverz?", a: `[T] = ${M2(4, -2, 1, 1)}, det = 6 ≠ 0 ⇒ obrnljiva, T⁻¹ = ${fr(1, 6)} ${M2(1, 2, -1, 4)}`, steps: ["koeficienti pri x: (4, 1), pri y: (−2, 1)", "det = 4 · 1 − (−2) · 1 = 6"] },
     ] },
 ];

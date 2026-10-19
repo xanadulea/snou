@@ -10,6 +10,9 @@
 // ─────────────────────────────────────────────────────────────
 
 const LOG = [
+  { date: "2026-10-19", items: [
+      { s: "la", txt: "Predavanje: linearne preslikave in matrike" },
+    ], status: {} },
   { date: "2026-10-17", items: [
       { s: "rp", txt: "Postavila snou — zemljevid vseh predmetov" },
     ], status: {} },
