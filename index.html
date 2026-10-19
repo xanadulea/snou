@@ -387,6 +387,7 @@
   .tt td { padding: 5px 12px; text-align: center; font-weight: 700; }
   .tt .t1 { color: #7fcf86; } .tt .t0 { color: #e8665a; opacity: .8; }
   .doneb { background: #7fcf86 !important; border-color: #7fcf86 !important; color: #111 !important; }
+  .evline { margin-top: 8px; font-size: 12.5px; padding: 5px 9px; border: 1px solid var(--c); border-radius: 7px; }
   @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 </style>
 </head>
@@ -475,14 +476,14 @@ let hidden = new Set();
 // ── kolokviji ──
 function renderExams() {
   const today = new Date(); today.setHours(0,0,0,0);
-  const next = SUBJECTS.flatMap(s => {
-    const d = s.exams.map(x => new Date(x + "T00:00")).filter(d => d >= today).sort((a,b) => a-b)[0];
-    return d ? [{ s, d, days: Math.round((d - today) / 864e5) }] : [];
-  }).sort((a,b) => a.days - b.days);
-  $("#exams").innerHTML = next.map(({s, d, days}) => `
+  const all = [
+    ...SUBJECTS.map(s => { const x = s.exams.filter(e => e >= TODAY_ISO).sort()[0]; return x && { s, x, lbl: "" }; }).filter(Boolean),
+    ...EVENTS.filter(([x]) => x >= TODAY_ISO).map(([x, sid, lbl]) => ({ s: subj[sid], x, lbl })),
+  ].map(o => ({ ...o, d: new Date(o.x + "T00:00") })).map(o => ({ ...o, days: Math.round((o.d - today) / 864e5) })).sort((a, b) => a.days - b.days);
+  $("#exams").innerHTML = all.map(({s, d, days, lbl}) => `
     <div class="exam ${days <= 14 ? "soon" : ""}">
       <div class="n">${days === 0 ? "danes" : days + " dni"}</div>
-      <div class="l"><span class="dot" style="background:${s.color}"></span>${s.name} · ${d.toLocaleDateString("sl-SI", {day:"numeric", month:"short"})}</div>
+      <div class="l"><span class="dot" style="background:${s.color}"></span>${s.name}${lbl ? ` · <b>${lbl.toLowerCase()}</b>` : ""} · ${d.toLocaleDateString("sl-SI", {day:"numeric", month:"short"})}</div>
     </div>`).join("");
 }
 
@@ -769,6 +770,8 @@ function hideTip() { $("#tip").style.opacity = 0; }
 const fmt = (d, o) => d.toLocaleDateString("sl-SI", o);
 const examDays = {};
 SUBJECTS.forEach(s => s.exams.forEach(e => (examDays[e] ||= []).push(s)));
+const eventDays = {};
+EVENTS.forEach(([d, sid, lbl]) => (eventDays[d] ||= []).push({ s: subj[sid], lbl }));
 const logByDay = Object.fromEntries(LOG.map(e => [e.date, e]));
 let pickedDay = TODAY_ISO;
 
@@ -787,7 +790,7 @@ function renderHeatmap() {
         lastMonth = day.getMonth();
         h += `<text x="${x}" y="11" font-size="10.5" fill="var(--muted)">${fmt(day, {month: "short"})}</text>`;
       }
-      const ex = examDays[k], lg = logByDay[k];
+      const ex = examDays[k] || (eventDays[k] ? eventDays[k].map(e => e.s) : undefined), lg = logByDay[k];
       const n = (lg ? lg.items.length : 0) + (plans[k] || []).filter(x => x.done).length + (quizLog[k] || 0);
       const future = day > TODAY;
       let fill = "var(--line)", op = future ? 0.45 : 1, stroke = "none";
@@ -810,6 +813,7 @@ function renderDayLog() {
   const tasks = TASKS.filter(t => t.date === pickedDay);
   let h = `<div class="d">${pickedDay === TODAY_ISO ? "Danes · " : ""}${fmt(d, {weekday: "long", day: "numeric", month: "long"})}</div><ul>`;
   ex.forEach(s => h += `<li><span class="dot" style="background:${s.color}"></span><b>Kolokvij · ${s.name}</b></li>`);
+  (eventDays[pickedDay] || []).forEach(e => h += `<li><span class="dot" style="background:${e.s.color}"></span><b>${e.lbl} · ${e.s.name}</b></li>`);
   tasks.forEach(t => h += `<li><span class="dot" style="background:${subj[t.s].color}"></span>Rok: ${t.txt}</li>`);
   (lg ? lg.items : []).forEach(i => h += `<li><span class="dot" style="background:${subj[i.s]?.color || "#fff"}"></span>${i.txt}</li>`);
   const pl = plans[pickedDay] || [];
@@ -1267,6 +1271,7 @@ function renderSubjects() {
       <div>
         <div class="nm"><span class="dot"></span>${s.name}</div>
         ${next ? `<div class="big">${days === 0 ? "danes" : days + " dni"}</div><div class="muted small">do ${k}. kolokvija · ${fmt(new Date(next + "T00:00"), {day: "numeric", month: "long"})}</div>` : ""}
+        ${EVENTS.filter(([x, sid]) => sid === s.id && x >= TODAY_ISO).map(([x, , lbl]) => `<div class="evline"><b>${lbl}</b> · ${fmt(new Date(x + "T00:00"), {day: "numeric", month: "long"})} · ${Math.round((new Date(x + "T00:00") - TODAY) / 864e5)} dni</div>`).join("")}
         ${NOTES.some(x => x.s === s.id) ? `<button class="notesbtn" data-notes="${s.id}">📓 Zapiski <span>${NOTES.filter(x => x.s === s.id && readN[x.id]).length}/${NOTES.filter(x => x.s === s.id).length}</span></button>` : ""}
         <div class="bar"><div style="width:${c[2] / n * 100}%"></div><div style="width:${c[1] / n * 100}%;opacity:.45"></div></div>
         <div class="muted small">${c[2]} od ${n} tem znaš${c[1] ? ` · ${c[1]} vadiš` : ""}</div>

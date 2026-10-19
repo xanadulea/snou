@@ -16,6 +16,11 @@ const SUBJECTS = [
   { id: "rp", name: "Računalniški praktikum", color: "#7fcf86", exams: [] },
 ];
 
+// Dodatni roki (teoretični izpiti ipd.) — [datum, predmet, oznaka]
+const EVENTS = [
+  ["2026-11-23", "la", "Teoretični izpit"],
+];
+
 const TOPICS = [
   // Matematika 1 — k = na katerem kolokviju pride (glej pretekle kolokvije)
   { id: "mnozice",   s: "mat", k: [1], name: "Množice in izjave",       note: "Logični vezniki, kvantifikatorji, operacije z množicami." },
