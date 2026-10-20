@@ -192,6 +192,15 @@ const NOTES = [
           `Par imenovalca je √3 + 1. Razširim: ${fr("1 · (√3 + 1)", "(√3 − 1)(√3 + 1)")}`,
           "Imenovalec: (√3)² − 1² = 3 − 1 = 2",
           `= ${fr("√3 + 1", 2)}`] } },
+      { h: "Mešana števila (1 ⅗)",
+        p: ["1 ⅗ pomeni 1 + ⅗. To je ena cela pica in še tri petine. Pri računanju ga VEDNO najprej spremeni v nepravi ulomek: celo število pomnoži z imenovalcem in prištej števec. 1 ⅗ = (5 · 1 + 3)/5 = 8/5.",
+            "Nato računaš z navadnimi ulomki (množenje: števec · števec, imenovalec · imenovalec). Na koncu lahko spet zapišeš mešano: 56/15 = 3 + 11/15, ker gre 15 v 56 trikrat in ostane 11.",
+            "Na fakulteti mešanih števil skoraj ne pišemo (1 ⅗ x bi bilo zmedeno), zato ostani pri nepravih ulomkih, npr. 8/5."],
+        zv: `a ${fr("b", "c")} = ${fr("a · c + b", "c")} &nbsp;&nbsp; npr. 2 ${fr(1, 3)} = ${fr("3 · 2 + 1", 3)} = ${fr(7, 3)}`,
+        ex: { q: `1 ${fr(3, 5)} · 2 ${fr(1, 3)} = ?`, steps: [
+          `1 ${fr(3, 5)} = ${fr(8, 5)}, &nbsp;2 ${fr(1, 3)} = ${fr(7, 3)}`,
+          `${fr(8, 5)} · ${fr(7, 3)} = ${fr(56, 15)}`,
+          `56 : 15 = 3, ostanek 11 ⇒ ${fr(56, 15)} = 3 ${fr(11, 15)}`] } },
     ],
     tasks: [
       { q: "Poenostavi (25a⁻²b³)⁻¹ · (0,2ab⁻¹)⁻². &nbsp;(1b)", a: "1/b", steps: ["(25a⁻²b³)⁻¹ = a²b⁻³ / 25", "(0,2ab⁻¹)⁻² = 0,2⁻² · a⁻²b² = 25a⁻²b²", "skupaj: (1/25) · 25 · a⁰ · b⁻¹ = 1/b"] },
