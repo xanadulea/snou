@@ -70,6 +70,31 @@ function mapPic(a, b, c, d, label) {
 }
 const M2 = (a, b, c, d) => mx([[a, b], [c, d]]);
 
+
+function arrows(L, R, pairs, title) {
+  const H = Math.max(L.length, R.length) * 30 + 20, ly = i => 22 + i * 30, ry = i => 22 + i * 30;
+  let h = `<ellipse cx="45" cy="${H / 2}" rx="34" ry="${H / 2 - 4}" fill="none" stroke="var(--muted)"/><ellipse cx="175" cy="${H / 2}" rx="34" ry="${H / 2 - 4}" fill="none" stroke="var(--muted)"/>`;
+  const off = (n) => (Math.max(L.length, R.length) - n) * 15;
+  L.forEach((l, i) => h += `<circle cx="45" cy="${ly(i) + off(L.length)}" r="4" fill="#f2b84b"/><text x="30" y="${ly(i) + off(L.length) + 4}" text-anchor="end" font-size="11" fill="var(--text)">${l}</text>`);
+  R.forEach((r, i) => h += `<circle cx="175" cy="${ry(i) + off(R.length)}" r="4" fill="#5ec2d6"/><text x="190" y="${ry(i) + off(R.length) + 4}" font-size="11" fill="var(--text)">${r}</text>`);
+  pairs.forEach(([a, b]) => { const y1 = ly(a) + off(L.length), y2 = ry(b) + off(R.length);
+    h += `<line x1="50" y1="${y1}" x2="167" y2="${y2}" stroke="var(--text)" stroke-width="1.3" marker-end="url(#ah)"/>`; });
+  return `<svg viewBox="0 0 220 ${H + 22}" style="width:100%;max-width:230px"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--text)"/></marker></defs>${h}
+    <text x="110" y="${H + 18}" text-anchor="middle" font-size="12.5" fill="var(--text)">${title}</text></svg>`;
+}
+function fdiag(up, down, label, v, dv) {
+  // up/down: dolžini puščic (sila roke, teža); v, dv: "up" | "down" | "" (hitrost, sprememba hitrosti)
+  const c = 85, y = 95, S = 14;
+  const ar = (x1, y1, x2, y2, col, t, tx, ty) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="3" marker-end="url(#fa${col.slice(1)})"/><text x="${tx}" y="${ty}" font-size="11.5" fill="${col}">${t}</text>`;
+  const mk = col => `<marker id="fa${col.slice(1)}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="${col}"/></marker>`;
+  let h = `<defs>${mk("#5ec2d6")}${mk("#e8665a")}${mk("#f2b84b")}${mk("#7fcf86")}</defs><circle cx="${c}" cy="${y}" r="6" fill="var(--text)"/>`;
+  if (up) h += ar(c, y - 7, c, y - 7 - up * S, "#5ec2d6", "roka", c + 8, y - up * S / 2 - 7);
+  if (down) h += ar(c, y + 7, c, y + 7 + down * S, "#e8665a", "teža mg", c + 8, y + down * S / 2 + 10);
+  if (v) h += ar(160, y + (v === "up" ? 25 : -25), 160, y + (v === "up" ? -25 : 25), "#f2b84b", "v", 168, y + 4);
+  if (dv) h += ar(195, y + (dv === "up" ? 18 : -18), 195, y + (dv === "up" ? -18 : 18), "#7fcf86", "Δv", 203, y + 4);
+  return `<svg viewBox="0 0 240 205" style="width:100%;max-width:220px">${h}<text x="120" y="200" text-anchor="middle" font-size="12" fill="var(--text)">${label}</text></svg>`;
+}
+
 const NOTES = [
   // ═══════════════════════════════════════════════
   { id: "z-ponavljanje", s: "mat", t: null, title: "Ponavljanje: potence, koreni, ulomki", vaje: "Vaje 1 · Naloge za ponavljanje",
@@ -316,5 +341,146 @@ const NOTES = [
       { q: "Teoretično: zakaj ima vsaka linearna preslikava T(0) = 0?", a: "T(0) = T(0 · v) = 0 · T(v) = 0 (linearnost za skalar 0)." },
       { q: "Teoretično: koliko matrik lahko priredimo dani linearni preslikavi?", a: "V vsaki izbrani bazi natanko eno. Ker baz je neskončno, je matrik neskončno, vse pa so med seboj povezane s prehodno matriko: B = P⁻¹AP." },
       { q: "T(x, y) = (4x − 2y, x + y) (K1 2025): matrika, je obrnljiva, inverz?", a: `[T] = ${M2(4, -2, 1, 1)}, det = 6 ≠ 0 ⇒ obrnljiva, T⁻¹ = ${fr(1, 6)} ${M2(1, 2, -1, 4)}`, steps: ["koeficienti pri x: (4, 1), pri y: (−2, 1)", "det = 4 · 1 − (−2) · 1 = 6"] },
+    ] },
+
+  // ═══════════════════════════════════════════════
+  { id: "z-realna", s: "mat", t: "supinf", title: "Realna števila: Dedekindov aksiom, gostota, absolutna vrednost", vaje: "Predavanje 20. 10. · zapiski 2.4 · vaje 5",
+    intro: "Zakaj sploh rabimo realna števila, če imamo ulomke? Ker imajo ulomki »luknje«: √2 ni ulomek. Realna števila so ulomki z zakrpanimi luknjami. Dedekindov aksiom je točno ta zakrpanost, zapisana z eno poved.",
+    parts: [
+      { h: "Luknje v ℚ: √2 ni ulomek",
+        p: ["Diagonala kvadrata s stranico 1 je dolga √2 (Pitagora). Če to dolžino preneseš na številsko premico, pristaneš na točki, ki ni noben ulomek.",
+            "Dokaz s protislovjem: recimo √2 = m/n, okrajšan ulomek. Potem 2n² = m², zato je m sod, m = 2k. Vstavimo: 2n² = 4k², n² = 2k², zato je tudi n sod. Ampak okrajšan ulomek ne more imeti sodega števca IN sodega imenovalca. Protislovje."],
+        zv: "√2 ∉ ℚ (dokaz: m/n okrajšan ⇒ m in n soda ⇒ protislovje)<br>iracionalna števila = realna števila, ki niso ulomki (√2, π, e …)" },
+      { h: "Dedekindov aksiom",
+        p: ["Spomni se: <b>supremum</b> množice je najmanjša zgornja meja. Za množico {1/2, 2/3, 3/4, …} je to 1.",
+            "<b>Dedekindov aksiom:</b> vsaka neprazna, navzgor omejena množica realnih števil ima supremum v ℝ. Povedano preprosto: v ℝ ni lukenj, vsaka »stena«, h kateri se množica približuje, je realno število.",
+            "V ℚ to NE velja. Množica A = {q ∈ ℚ ; q² ≤ 2} vsebuje ulomke 1, 1,4, 1,41, 1,414 … ki se plazijo proti √2. Njena najmanjša zgornja meja je √2, ki pa ni ulomek. V ℚ torej A nima supremuma."],
+        pic: seqline([1, 1.4, 1.41, 1.414, 1.3, 1.2, 1.38, 1.4142], 0.9, 1.6, [[Math.SQRT2, "√2 ∉ ℚ", true]]),
+        zv: "Dedekindov aksiom: vsaka neprazna navzgor omejena A ⊂ ℝ ima sup A ∈ ℝ<br>(isto za navzdol omejeno in inf)<br>v ℚ ne velja: A = {q ∈ ℚ ; q² ≤ 2}, sup A = √2 ∉ ℚ",
+        ex: { q: "Posledica: ℕ ni navzgor omejena (Arhimedova lastnost).", steps: [
+          "Recimo, da je. Po Dedekindu ima supremum M = sup ℕ.",
+          "M − 1 ni več zgornja meja, zato obstaja m ∈ ℕ z m > M − 1.",
+          "Potem m + 1 > M, a m + 1 ∈ ℕ. Protislovje z M = zgornja meja."] } },
+      { h: "Gostota: ulomki in iracionalna števila so povsod",
+        p: ["<b>Gostota ℚ:</b> v vsakem intervalu (a, b), pa naj bo še tako majhen, je racionalno število. Ideja dokaza: izberi n tako velik, da je korak 1/n manjši od dolžine intervala. Ko po premici skačeš s koraki 1/n (0, 1/n, 2/n, …), ne moreš preskočiti intervala, ker je korak krajši od njega.",
+            "<b>Gostota iracionalnih:</b> tudi iracionalno število je v vsakem intervalu. Ključ: racionalno + iracionalno = iracionalno. Zato če najdeš ulomek q v (a − √2, b − √2), je q + √2 iracionalen in leži v (a, b).",
+            "Posledica: v vsakem intervalu je NESKONČNO obojih (interval razdeliš na pol in ponoviš)."],
+        zv: "V vsakem (a, b) obstaja racionalno IN iracionalno število<br>q ∈ ℚ, x ∉ ℚ ⇒ q + x ∉ ℚ in qx ∉ ℚ (q ≠ 0)<br>iracionalno + iracionalno je lahko racionalno: √2 + (−√2) = 0",
+        ex: { q: "Najdi racionalno in iracionalno število med 0 in 1/100.", steps: [
+          "racionalno: 1/200 (sredina)",
+          "iracionalno: √2/200 ≈ 0,00707 (racionalno × iracionalno je iracionalno)"] } },
+      { h: "Decimalni zapis",
+        p: ["Vsako realno število ima decimalni zapis. Ulomki so natanko tista števila, katerih zapis je <b>končen</b> (1/4 = 0,25) ali <b>periodičen</b> (1/3 = 0,333…). Iracionalna števila imajo neskončen neperiodičen zapis (√2 = 1,41421356…).",
+            "Periodično decimalno število spremeniš v ulomek s trikom: pomnoži z 10ᵏ, da se perioda poravna, in odštej, da perioda izgine.",
+            "Presenečenje: 0,999… = 1. Če x = 0,999…, je 10x = 9,999…, odštejemo: 9x = 9, x = 1. Ni »malo manj kot 1«, je natanko 1."],
+        zv: "ℚ ⇔ končen ali periodičen decimalni zapis<br>periodično → ulomek: 10ᵏx − x odstrani periodo &nbsp;&nbsp; 0,999… = 1",
+        ex: { q: "Zapiši 0,121212… kot ulomek.", steps: [
+          "x = 0,1212…, perioda ima 2 števki ⇒ 100x = 12,1212…",
+          "100x − x = 12 ⇒ 99x = 12",
+          `x = ${fr(12, 99)} = ${fr(4, 33)}`] } },
+      { h: "Intervali in okolica",
+        p: ["Interval je množica vseh realnih števil med dvema mejama. Oglati oklepaj [ pomeni »meja je vključena«, okrogli ( pomeni »ni«. Pri ∞ je oklepaj vedno okrogel, ker ∞ ni število.",
+            "<b>ε-okolica</b> točke a je interval (a − ε, a + ε): vse točke, ki so od a oddaljene manj kot ε. To boš rabila pri limitah."],
+        pic: nl(-1, 5, [[0.5, 3.5, false, false]], [[0.5, "a − ε"], [2, "a"], [3.5, "a + ε"]], "#5ec2d6"),
+        zv: "[a, b] = {x ; a ≤ x ≤ b} &nbsp; (a, b) = {x ; a < x < b} &nbsp; [a, ∞) = {x ; x ≥ a}<br>ε-okolica: (a − ε, a + ε) = {x ; |x − a| < ε}" },
+      { h: "Absolutna vrednost = razdalja",
+        p: ["|x| je razdalja števila x od 0. Zato nikoli ni negativna. Formalno: |x| = x, če je x ≥ 0, in |x| = −x, če je x < 0 (minus negativnega števila je pozitivno).",
+            "Ključni pogled: <b>|x − a| je razdalja med x in a</b>. Potem neenačbe postanejo slike: |x − 2| < 3 pomeni »x je od 2 oddaljen manj kot 3«, torej −1 < x < 5. Brez računanja.",
+            "Trikotniška neenakost |x + y| ≤ |x| + |y|: ko seštevaš števila z različnima predznakoma, se deloma pokrajšata, zato je rezultat manjši."],
+        pic: nl(-3, 7, [[-1, 5, false, false]], [[-1], [2, "2"], [5]], "#f2b84b"),
+        zv: `|x| = x (x ≥ 0), −x (x < 0) &nbsp;&nbsp; |x − a| = razdalja med x in a<br>|xy| = |x||y| &nbsp; |−x| = |x| &nbsp; |x + y| ≤ |x| + |y|<br>|x − a| < r ⇔ a − r < x < a + r`,
+        ex: { q: "Reši |x − 1| > 1/4. &nbsp;(vaje 5, 9a)", steps: [
+          "»x je od 1 oddaljen VEČ kot 1/4«",
+          "levo od 1 − 1/4 = 3/4 ali desno od 1 + 1/4 = 5/4",
+          "x ∈ (−∞, 3/4) ∪ (5/4, ∞)"] } },
+    ],
+    tasks: [
+      { q: "Naj bo q ≠ 0 racionalno in x iracionalno. Dokaži, da je q + x iracionalno. &nbsp;(vaje 5, 1)", a: "Če bi bil q + x = r racionalen, bi bil x = r − q racionalen (razlika ulomkov je ulomek). Protislovje.", steps: ["dokaz s protislovjem", "predpostavi nasprotno in pridi do x ∈ ℚ"] },
+      { q: "A = {(2n − 1)/(2n + 1) ; n ∈ ℕ}: sup, inf, max, min. &nbsp;(vaje 5, 4a)", a: "inf A = min A = 1/3, sup A = 1, max A ne obstaja.", steps: [`${fr("2n − 1", "2n + 1")} = 1 − ${fr(2, "2n + 1")}: narašča`, "n = 1 da 1/3, nato se bliža 1"] },
+      { q: "B = {1 + x² ; x ∈ (−1, 3]}: sup, inf, max, min. &nbsp;(vaje 5, 5)", a: "B = [1, 10]: min = inf = 1 (x = 0), max = sup = 10 (x = 3).", steps: ["x² na (−1, 3] zavzame vse vrednosti od 0 (pri x = 0) do 9 (pri x = 3)"] },
+      { q: "Reši |x + 1| = 3. &nbsp;(7a)", a: "x ∈ {−4, 2}", steps: ["»razdalja od −1 je 3«: −1 − 3 = −4 ali −1 + 3 = 2"] },
+      { q: "Reši |x − 1| = |2x + 2|. &nbsp;(7b)", a: "x ∈ {−3, −1/3}", steps: ["x − 1 = 2x + 2 ⇒ x = −3", "x − 1 = −(2x + 2) ⇒ 3x = −1 ⇒ x = −1/3"] },
+      { q: "Zapiši 0,272727… kot ulomek.", a: "3/11", steps: ["100x − x = 27 ⇒ x = 27/99 = 3/11"] },
+    ] },
+
+  // ═══════════════════════════════════════════════
+  { id: "z-la-injsurj", s: "la", t: "preslikave", title: "Injektivnost, surjektivnost, jedro in slika", vaje: "Predavanje 20. 10. · izpitno vprašanje 2",
+    intro: "Danes ste veliko delali injektivnost in surjektivnost. To sta samo dve vprašanji o preslikavi: »ali kdaj dve točki zadeneta isto?« in »ali zadenem vse?«. Pri linearnih preslikavah na to odgovori jedro in slika.",
+    parts: [
+      { h: "Injektivna, surjektivna, bijektivna: na puščicah",
+        p: ["Predstavljaj si preslikavo kot puščice iz leve množice v desno. Vsaka točka levo ima natanko eno puščico.",
+            "<b>Injektivna</b>: nobeni dve puščici ne zadeneta iste točke. Različne točke gredo na različna mesta.",
+            "<b>Surjektivna</b>: vsaka točka desno je zadeta (vsaj enkrat).",
+            "<b>Bijektivna</b>: oboje. Takrat lahko puščice obrneš: to je inverz."],
+        pic: `<div class="vrow">${arrows(["1", "2", "3"], ["a", "b", "c", "d"], [[0, 0], [1, 1], [2, 3]], "injektivna, ne surjektivna")}${arrows(["1", "2", "3"], ["a", "b"], [[0, 0], [1, 1], [2, 1]], "surjektivna, ne injektivna")}${arrows(["1", "2", "3"], ["a", "b", "c"], [[0, 1], [1, 2], [2, 0]], "bijektivna")}</div>`,
+        zv: "injektivna: T(u) = T(v) ⇒ u = v (različni gredo v različne)<br>surjektivna: vsak w ima neki v, da T(v) = w<br>bijektivna = injektivna + surjektivna ⇔ obstaja inverz" },
+      { h: "Jedro in slika",
+        p: ["<b>Jedro</b> ker T so vsi vektorji, ki se preslikajo v 0. Iščeš ga tako, da rešiš T(v) = 0, torej sistem Av = 0.",
+            "<b>Slika</b> im T so vsi vektorji, ki jih T zadene. Napenjajo jo stolpci matrike (vsak T(v) je kombinacija stolpcev).",
+            "Primer projekcije na os x: vsa os y se zmečka v 0 (jedro = os y), zadene pa samo os x (slika = os x)."],
+        zv: "ker T = {v ; T(v) = 0} → reši Av = 0<br>im T = {T(v)} = napenjajo jo stolpci A",
+        ex: { q: `Jedro in slika za A = ${M2(1, 2, 2, 4)}`, steps: [
+          "ker: x + 2y = 0 (druga vrstica je dvakratnik prve) ⇒ v = t(−2, 1): premica",
+          "im: stolpca (1, 2) in (2, 4) sta kolinearna ⇒ im = premica skozi (1, 2)",
+          "det = 4 − 4 = 0: ravnina se zmečka v premico"] } },
+      { h: "Ključ: injektivna ⇔ jedro je samo 0",
+        p: ["Pri linearnih preslikavah ni treba preverjati vseh parov točk. Dovolj je pogledati, kaj gre v 0.",
+            "Zakaj: T(u) = T(v) ⇔ T(u) − T(v) = 0 ⇔ T(u − v) = 0 ⇔ u − v ∈ ker T. Če je v jedru samo 0, mora biti u − v = 0, torej u = v."],
+        zv: "T linearna: T injektivna ⇔ ker T = {0}<br>dokaz: T(u) = T(v) ⇔ T(u − v) = 0",
+        warn: "To velja samo za LINEARNE preslikave. Za f(x) = x² je f⁻¹(0) = {0}, pa vseeno ni injektivna (f(−1) = f(1))." },
+      { h: "Za ℝ² → ℝ²: vse je eno",
+        p: ["Velja dim ker T + dim im T = 2 (toliko, kot je dimenzija začetnega prostora). Kar se »izgubi« v jedru, manjka v sliki.",
+            "Če je jedro samo {0} (dimenzija 0), je slika dimenzije 2, torej cela ravnina. Zato pri preslikavi ravnine nase injektivna ⇔ surjektivna ⇔ det ≠ 0. Preveriš eno, dobiš vse."],
+        zv: "dim ker T + dim im T = dim začetnega prostora<br>T: ℝ² → ℝ²: injektivna ⇔ surjektivna ⇔ ker T = {0} ⇔ det A ≠ 0 ⇔ obrnljiva" },
+      { h: "Ko dimenziji nista enaki",
+        p: ["ℝ² → ℝ³: ravnino ne moreš raztegniti čez cel prostor, zato <b>nikoli ni surjektivna</b>, lahko pa je injektivna. Primer: T(x, y) = (x, y, x + y).",
+            "ℝ³ → ℝ²: prostor stlačiš v ravnino, nekaj se mora zmečkati, zato <b>nikoli ni injektivna</b>, lahko pa je surjektivna. Primer: T(x, y, z) = (x, y), jedro je os z."],
+        zv: "ℝⁿ → ℝᵐ, n < m: ni surjektivna &nbsp;&nbsp; n > m: ni injektivna" },
+    ],
+    tasks: [
+      { q: "Je T(x, y) = (x + y, x − y) bijektivna?", a: "Da: det = −1 − 1 = −2 ≠ 0.", steps: [`A = ${M2(1, 1, 1, -1)}`] },
+      { q: "T(x, y) = (x − y, 2y − 2x): jedro in slika.", a: "ker T = {t(1, 1)}, im T = {s(1, −2)}. Ni ne injektivna ne surjektivna.", steps: ["T(x, y) = (x − y) · (1, −2)", "v 0 gre natanko, ko x = y"] },
+      { q: "T(x, y) = (x, y, x + y): injektivna? surjektivna?", a: "Injektivna (T(x, y) = 0 ⇒ x = y = 0), ne surjektivna (npr. (0, 0, 1) ni zadet: ker iz prvih dveh x = y = 0 sledi tretja 0)." },
+      { q: "T(x, y, z) = (x, y): jedro? surjektivna?", a: "ker T = os z = {(0, 0, t)}, surjektivna (vsak (a, b) je T(a, b, 0)), ni injektivna." },
+      { q: "Teoretično: zakaj je linearna T injektivna natanko tedaj, ko je ker T = {0}?", a: "T(u) = T(v) ⇔ T(u − v) = 0 ⇔ u − v ∈ ker T. Če je ker T = {0}, sledi u = v. Obratno: če bi bil v ≠ 0 v jedru, bi bil T(v) = T(0), torej ne injektivna." },
+    ] },
+
+  // ═══════════════════════════════════════════════
+  { id: "z-fiz-sile", s: "fiz", t: "newton", title: "Sile: dvigneš žogo — kaj deluje nanjo?", vaje: "Vaje 20. 10. · Etkina, 3. poglavje",
+    intro: "Ključno vprašanje 3. poglavja: kako so sile povezane z gibanjem? Večina ljudi intuitivno misli »sila kaže tja, kamor se telo giblje«. Eksperiment z žogo pokaže, da to ni res, in iz tega dobiš 2. Newtonov zakon.",
+    parts: [
+      { h: "Sistem in sile nanj",
+        p: ["Najprej izbereš <b>sistem</b>: tukaj je to žoga. Vse ostalo je okolica.",
+            "Sila vedno pride od nečesa: je interakcija med dvema telesoma. Na žogo delujeta dve telesi: <b>Zemlja</b> (teža, navzdol, mg) in <b>tvoja roka</b> (navzgor). Če ne znaš povedati, katero telo povzroča silo, te sile ni."],
+        zv: "sistem = telo, ki ga opazujemo &nbsp;&nbsp; sila = interakcija dveh teles<br>na žogo v roki: teža mg (Zemlja, dol) + sila roke (gor)" },
+      { h: "Diagram sil v treh fazah dvigovanja",
+        p: ["Diagram sil: telo nariši kot piko, sile kot puščice iz nje. Dolžina puščice = velikost sile. Zraven nariši še hitrost v in spremembo hitrosti Δv.",
+            "<b>1. Začneš dvigovati</b>: žoga se iz mirovanja pospeši navzgor. Roka mora potiskati močneje kot teža.",
+            "<b>2. Dvigaš enakomerno</b>: hitrost je stalna. Roka potiska natanko toliko kot teža.",
+            "<b>3. Ustavljaš se na vrhu</b>: žoga se še giblje gor, a se upočasnjuje. Roka potiska manj kot teža."],
+        pic: `<div class="vrow">${fdiag(5, 3.5, "1. pospešuje gor", "up", "up")}${fdiag(3.5, 3.5, "2. stalna hitrost", "up", "")}${fdiag(2, 3.5, "3. upočasnjuje (gre gor)", "up", "down")}</div>` },
+      { h: "Hipotezi in test",
+        p: ["<b>Hipoteza 1:</b> vsota sil kaže v smeri <b>hitrosti</b> (kamor se telo giblje).",
+            "<b>Hipoteza 2:</b> vsota sil kaže v smeri <b>spremembe hitrosti</b> Δv.",
+            "Test je faza 3: žoga se giblje NAVZGOR, upočasnjuje se, torej Δv kaže NAVZDOL. Teža je večja od sile roke, zato vsota sil kaže NAVZDOL. Hipoteza 1 napove gor, opazimo dol: <b>ovržena</b>. Hipoteza 2 napove dol: <b>preživi</b>.",
+            "Še bolj čisto: ko žogo vržeš navzgor in jo spustiš, nanjo deluje SAMO teža (dol), žoga pa leti gor. Gibanje gor brez sile gor."],
+        zv: "ΣF kaže v smeri Δv (spremembe hitrosti), NE v smeri v<br>vržena žoga gre gor, sila (teža) pa kaže dol",
+        warn: "Hipotezo ovrže en sam eksperiment, ki ji nasprotuje. Potrdi je pa noben ne more dokončno: preživi samo vse teste doslej." },
+      { h: "Iz tega sledita Newtonova zakona",
+        p: ["<b>2. Newtonov zakon:</b> a = ΣF / m. Pospešek (ki kaže v smeri Δv) kaže v smeri vsote sil. Večja masa, manjši pospešek pri isti sili.",
+            "<b>1. Newtonov zakon:</b> faza 2 (stalna hitrost) pokaže, da gibanje NE potrebuje neto sile. ΣF = 0 pomeni »hitrost se ne spreminja«, ne »telo miruje«.",
+            "<b>3. Newtonov zakon:</b> ko roka potiska žogo gor, žoga potiska roko dol z enako veliko silo. Ti dve sili delujeta na RAZLIČNI telesi, zato se ne izničita."],
+        zv: "2. zakon: ΣF = ma (a v smeri ΣF)<br>1. zakon: ΣF = 0 ⇔ v = konst (lahko ≠ 0)<br>3. zakon: F<sub>roka→žoga</sub> = −F<sub>žoga→roka</sub> (na različni telesi)",
+        ex: { q: "Žogo z maso 0,5 kg dvigaš s pospeškom 2 m/s² navzgor. S kolikšno silo jo potiskaš? (g = 9,8 m/s²)", steps: [
+          "Os navzgor. ΣF = F<sub>roka</sub> − mg = ma",
+          "F<sub>roka</sub> = m(g + a) = 0,5 kg · (9,8 + 2) m/s² = 5,9 N",
+          "Za primerjavo: pri stalni hitrosti (a = 0) je F<sub>roka</sub> = mg = 4,9 N"] } },
+    ],
+    tasks: [
+      { q: "Žogo držiš pri miru. Katere sile delujejo nanjo in kakšna je vsota?", a: "Teža mg (dol) in sila roke (gor), enako veliki. ΣF = 0, ker je a = 0." },
+      { q: "Žogo vržeš navzgor. Kakšen je diagram sil, ko je že v zraku in leti gor?", a: "Samo teža mg navzdol (roka se je ne dotika več; zračni upor zanemarimo). Δv kaže dol, žoga se upočasnjuje." },
+      { q: "Ali obstaja »sila meta«, ki žogo nese navzgor, ko jo spustiš?", a: "Ne. Po spustu ni telesa, ki bi tako silo povzročalo. Žoga gre gor zaradi hitrosti, ki jo je imela ob spustu, ne zaradi sile." },
+      { q: "Dvigalo se giblje navzgor in se ustavlja. Ali je tvoja »teža« na tehtnici večja ali manjša kot mg?", a: "Manjša: Δv kaže dol, zato ΣF kaže dol, N < mg. Tehtnica kaže N.", steps: ["isto kot faza 3 pri žogi"] },
+      { q: "Žogo 0,5 kg spuščaš navzdol in jo zaviraš s pospeškom 2 m/s² (navzgor). S kolikšno silo jo držiš?", a: "5,9 N (enako kot pri pospeševanju navzgor: Δv kaže gor v obeh primerih).", steps: ["F − mg = m · 2 m/s²", "F = 0,5 · 11,8 = 5,9 N"] },
     ] },
 ];

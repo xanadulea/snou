@@ -10,6 +10,12 @@
 // ─────────────────────────────────────────────────────────────
 
 const LOG = [
+  { date: "2026-10-20", items: [
+      { s: "la", txt: "Injektivnost, surjektivnost, linearne preslikave, matrike" },
+      { s: "mat", txt: "Dedekindov aksiom, gostota ℚ in iracionalnih, decimalni zapis" },
+      { s: "mat", txt: "Absolutna vrednost, intervali" },
+      { s: "fiz", txt: "Hipotezi 1 in 2: sile na žogo, ko jo dvigneš" },
+    ], status: {} },
   { date: "2026-10-19", items: [
       { s: "la", txt: "Predavanje: linearne preslikave in matrike" },
     ], status: {} },
