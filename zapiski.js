@@ -122,6 +122,38 @@ function motiondiag() {
     <text x="100" y="220" text-anchor="middle" font-size="11" fill="var(--text)">diagram gibanja (od spodaj gor)</text></svg>`;
 }
 
+
+function isle() {
+  return `<svg viewBox="0 0 300 200" style="width:100%;max-width:340px"><defs><marker id="isa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f2b84b"/></marker></defs>
+    <text x="150" y="28" text-anchor="middle" font-size="15" fill="var(--text)">opazovanje</text>
+    <text x="250" y="98" text-anchor="middle" font-size="15" fill="var(--text)">razlaga</text>
+    <text x="150" y="160" text-anchor="middle" font-size="15" fill="var(--text)">test</text>
+    <text x="150" y="196" text-anchor="middle" font-size="13" fill="#7fcf86">→ aplikacija</text>
+    <path d="M200,24 Q250,35 252,78" fill="none" stroke="#f2b84b" stroke-width="2" marker-end="url(#isa)"/>
+    <path d="M250,108 Q240,150 190,156" fill="none" stroke="#f2b84b" stroke-width="2" marker-end="url(#isa)"/>
+    <path d="M112,152 Q55,120 102,32" fill="none" stroke="#e8665a" stroke-width="2" marker-end="url(#isa)"/>
+    <text x="4" y="96" font-size="11" fill="#e8665a">ne drži →</text><text x="4" y="109" font-size="11" fill="#e8665a">nova razlaga</text>
+    <text x="252" y="140" font-size="10.5" fill="var(--muted)">napoved</text></svg>`;
+}
+function plot({ W = 300, H = 190, xmax, ymin = 0, ymax, xl = "t", yl = "x", series = [], fills = [], marks = "", ticks = true }) {
+  const X = x => 34 + x / xmax * (W - 50), Y = y => H - 24 - (y - ymin) / (ymax - ymin) * (H - 40);
+  let h = `<line x1="34" y1="${Y(0)}" x2="${W - 8}" y2="${Y(0)}" stroke="var(--faint)" stroke-width="1.5"/><line x1="34" y1="${H - 20}" x2="34" y2="8" stroke="var(--faint)" stroke-width="1.5"/>
+    <text x="${W - 4}" y="${Y(0) - 6}" text-anchor="end" font-size="12" fill="var(--muted)">${xl}</text><text x="40" y="18" font-size="12" fill="var(--muted)">${yl}</text>`;
+  if (ticks) for (let i = 1; i <= xmax; i++) h += `<text x="${X(i)}" y="${Y(0) + 14}" text-anchor="middle" font-size="10" fill="var(--faint)">${i}</text>`;
+  fills.forEach(({ pts, col }) => h += `<polygon points="${pts.map(([x, y]) => `${X(x)},${Y(y)}`).join(" ")}" fill="${col}" fill-opacity=".25"/>`);
+  series.forEach(({ pts, col, dots, dash, w = 2.5 }) => {
+    h += `<polyline points="${pts.map(([x, y]) => `${X(x)},${Y(y)}`).join(" ")}" fill="none" stroke="${col}" stroke-width="${w}" ${dash ? 'stroke-dasharray="5 4"' : ""}/>`;
+    if (dots) pts.forEach(([x, y]) => h += `<circle cx="${X(x)}" cy="${Y(y)}" r="3.5" fill="${col}"/>`);
+  });
+  return `<svg class="fg" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:330px">${h}${typeof marks === "function" ? marks(X, Y) : marks}</svg>`;
+}
+function mdiag(xs, col = "#f2b84b", label = "") {
+  const X = x => 20 + x * 26;
+  let h = `<line x1="10" y1="30" x2="${X(Math.max(...xs)) + 30}" y2="30" stroke="var(--faint)"/>`;
+  xs.forEach((x, i) => { h += `<circle cx="${X(x)}" cy="30" r="5" fill="${col}"/>`; if (i < xs.length - 1) { const d = xs[i + 1] - x; h += `<line x1="${X(x)}" y1="16" x2="${X(x) + d * 26 * .8}" y2="16" stroke="#7fcf86" stroke-width="2" marker-end="url(#mdh)"/>`; } });
+  return `<svg viewBox="0 0 ${X(Math.max(...xs)) + 40} 58" style="width:100%;max-width:${X(Math.max(...xs)) + 60}px"><defs><marker id="mdh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7fcf86"/></marker></defs>${h}<text x="10" y="54" font-size="11" fill="var(--muted)">${label}</text></svg>`;
+}
+
 const NOTES = [
   // ═══════════════════════════════════════════════
   { id: "z-ponavljanje", s: "mat", t: null, title: "Ponavljanje: potence, koreni, ulomki", vaje: "Vaje 1 · Naloge za ponavljanje",
@@ -470,6 +502,86 @@ const NOTES = [
       { q: "T(x, y) = (x, y, x + y): injektivna? surjektivna?", a: "Injektivna (T(x, y) = 0 ⇒ x = y = 0), ne surjektivna (npr. (0, 0, 1) ni zadet: ker iz prvih dveh x = y = 0 sledi tretja 0)." },
       { q: "T(x, y, z) = (x, y): jedro? surjektivna?", a: "ker T = os z = {(0, 0, t)}, surjektivna (vsak (a, b) je T(a, b, 0)), ni injektivna." },
       { q: "Teoretično: zakaj je linearna T injektivna natanko tedaj, ko je ker T = {0}?", a: "T(u) = T(v) ⇔ T(u − v) = 0 ⇔ u − v ∈ ker T. Če je ker T = {0}, sledi u = v. Obratno: če bi bil v ≠ 0 v jedru, bi bil T(v) = T(0), torej ne injektivna." },
+    ] },
+
+  // ═══════════════════════════════════════════════
+  { id: "z-fiz-kinematika", s: "fiz", t: "kinematika", title: "Kinematika: lega, hitrost, pospešek", vaje: "Predavanje (tabla, 18 strani) · Etkina, 2. poglavje",
+    intro: "Kinematika opisuje, KAKO se telo giblje: kje je, kako hitro, ali pospešuje. Še ne sprašuje, ZAKAJ (to so sile, naslednje poglavje). Ta lekcija sledi predavanju s table, korak za korakom, in nadomesti 2. poglavje knjige.",
+    parts: [
+      { h: "Kako deluje fizika",
+        p: ["Profesor (in knjiga) začne s krogom, po katerem gradimo fiziko. <b>Opazujemo</b> pojav, izmislimo <b>razlago</b> (pri tem si naredimo predpostavke), iz razlage naredimo napoved in jo <b>testiramo</b> s poskusom. Če test ne uspe, gremo nazaj in iščemo novo razlago. Če uspe, jo lahko <b>uporabimo</b>.",
+            "Tako ste delali pri Aktivnosti 2: hipoteza 1 ni preživela testa, hipoteza 2 je."],
+        pic: isle(),
+        zv: "opazovanje → razlaga (predpostavke) → test → aplikacija; če test ne uspe → nova razlaga" },
+      { h: "Opazovalni sistem",
+        p: ["Preden kaj opišeš, rabiš tri stvari: <b>izhodišče</b> (od kod merimo), <b>uro</b> (kdaj je t = 0) in <b>koordinatno os</b> (katera smer je pozitivna).",
+            "Enote: čas v sekundah [t] = s, lega v metrih [x] = m. Predpone: μ (mikro) = 10⁻⁶, torej 1 μs = 0,000001 s. Oglati oklepaj [ ] pomeni »enota od«."],
+        zv: "opazovalni sistem = izhodišče + ura + koordinatna os<br>[t] = s, [x] = m &nbsp;&nbsp; μ = 10⁻⁶, m = 10⁻³, k = 10³" },
+      { h: "Lega, premik, razdalja, pot",
+        p: ["<b>Lega</b> x je koordinata telesa na osi. Ker se s časom spreminja, pišemo x(t). Npr. x(t₁) = x₁.",
+            "<b>Premik</b> d = Δx = x₂ − x₁ je vektor od začetne do končne lege. Lahko je negativen (gibanje v negativno smer).",
+            "<b>Razdalja</b> |d| je velikost premika. <b>Pot</b> je vse, kar si prehodila: če greš 5 m naprej in 5 m nazaj, je premik 0, pot pa 10 m."],
+        pic: nl(-1, 6, [[1.5, 4.5, true, true]], [[0, "izhodišče"], [1.5, "x₁"], [4.5, "x₂"]], "#f2b84b"),
+        zv: "Δx = x<sub>končna</sub> − x<sub>začetna</sub> (premik, lahko < 0)<br>razdalja = |Δx| &nbsp;&nbsp; pot ≥ razdalja (šteje vse, tudi nazaj)" },
+      { h: "Diagram gibanja",
+        p: ["Telo »fotografiraš« v enakih časovnih presledkih (t − Δt, t, t + Δt …) in pike narišeš na os. Zraven nariši puščice hitrosti.",
+            "Enako razmaknjene pike = <b>enakomerno</b> gibanje. Vse bolj narazen = pospešuje. Vse bližje = zavira."],
+        pic: `<div style="display:flex;flex-direction:column;gap:6px;align-items:center">${mdiag([0, 2, 4, 6, 8], "#f2b84b", "enakomerno")}${mdiag([0, .5, 1.5, 3, 5, 7.5], "#5ec2d6", "pospešuje")}${mdiag([0, 2.5, 4.5, 6, 7, 7.5], "#e8665a", "zavira")}</div>`,
+        zv: "enaki razmiki = enakomerno &nbsp; večji = pospešuje &nbsp; manjši = zavira" },
+      { h: "Graf x(t) in hitrost kot naklon",
+        p: ["Iz tabele (t, x) narišeš točke. Pri enakomernem gibanju ležijo na premici. Profesorjev primer: x = 1, 2, 3, 4, 5 m ob t = 0, 1, 2, 3, 4 s (rumena) in x = 1; 1,5; 2; 2,5; 3 m (modra).",
+            "<b>Naklon</b> premice je hitrost: v<sub>x</sub> = Δx/Δt = (x₂ − x₁)/(t₂ − t₁). Rumena: 4 m / 4 s = 1 m/s. Modra: 2 m / 4 s = 0,5 m/s. Bolj strma = hitrejša. Pada (zelena) = v<sub>x</sub> < 0, gibanje v negativno smer.",
+            "Ker je Δx = v<sub>x</sub> · Δt, dobiš enačbo enakomernega gibanja: x = x₀ + v<sub>x</sub>t, kjer je x₀ lega ob t = 0."],
+        pic: plot({ xmax: 5, ymin: -1, ymax: 6, xl: "t [s]", yl: "x [m]", series: [
+          { pts: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]], col: "#f2b84b", dots: 1 },
+          { pts: [[0, 1], [1, 1.5], [2, 2], [3, 2.5], [4, 3]], col: "#5ec2d6", dots: 1 },
+          { pts: [[0, 1], [4.5, -0.8]], col: "#7fcf86" }],
+          marks: (X, Y) => `<text x="${X(4.1)}" y="${Y(5.2)}" font-size="11" fill="#f2b84b">1 m/s</text><text x="${X(4.1)}" y="${Y(3.2)}" font-size="11" fill="#5ec2d6">0,5 m/s</text><text x="${X(3.6)}" y="${Y(-0.2)}" font-size="11" fill="#7fcf86">v &lt; 0</text>` }),
+        zv: "v<sub>x</sub> = Δx/Δt = naklon grafa x(t) &nbsp;&nbsp; [v] = m/s<br>enakomerno: x = x₀ + v<sub>x</sub>t<br>Δx > 0 ⇒ v<sub>x</sub> > 0 &nbsp;&nbsp; Δx < 0 ⇒ v<sub>x</sub> < 0" },
+      { h: "Graf v(t): ploščina = premik",
+        p: ["Pri enakomernem gibanju je graf v(t) vodoravna črta. Ploščina pravokotnika pod njo je v<sub>x</sub> · t, kar je ravno x − x₀, premik. Preveri enote: m/s · s = m.",
+            "To velja vedno, tudi ko v(t) ni ravna črta: <b>ploščina pod v(t) = premik</b>. Ploščina pod osjo šteje negativno (gibanje nazaj)."],
+        pic: plot({ xmax: 5, ymax: 3, xl: "t [s]", yl: "v [m/s]", fills: [{ pts: [[0, 0], [0, 2], [3, 2], [3, 0]], col: "#f2b84b" }], series: [{ pts: [[0, 2], [5, 2]], col: "#f2b84b" }, { pts: [[0, 1], [5, 1]], col: "#5ec2d6" }],
+          marks: (X, Y) => `<text x="${X(1.5)}" y="${Y(1)}" text-anchor="middle" font-size="12" fill="var(--text)">Δx = v·t</text>` }),
+        zv: "ploščina pod v(t) = premik Δx (pod osjo negativno)" },
+      { h: "Povprečna in trenutna hitrost",
+        p: ["Ko graf x(t) ni premica, se hitrost spreminja. <b>Povprečna hitrost</b> med t₁ in t₂ je naklon daljice med točkama: v̄<sub>x</sub> = Δx/Δt. Različna gibanja (A, B, C, D na tabli) imajo lahko enako povprečno hitrost, čeprav so zelo različna.",
+            "<b>Trenutna hitrost</b> dobiš, ko Δt krčiš proti 0: daljica postane tangenta. Iz razlike (diference) Δt postane diferencial dt: v<sub>x</sub> = dx/dt. To je odvod, ki ga delate pri matematiki.",
+            "<b>Velikost hitrosti</b> (hitrost v vsakdanjem pomenu) je pot / čas, vedno ≥ 0."],
+        pic: plot({ xmax: 5, ymax: 5, xl: "t", yl: "x", series: [
+          { pts: [[0, .3], [.5, .5], [1, 1], [1.5, 1.6], [2, 2.6], [2.5, 3.3], [3, 3.7], [3.5, 3.9], [4, 4], [4.5, 4.4]], col: "#f2b84b" },
+          { pts: [[1, 1], [4, 4]], col: "#e8665a", dash: 1, w: 2 },
+          { pts: [[1.2, .9], [2.8, 4.1]], col: "#7fcf86", w: 2 }],
+          marks: (X, Y) => `<text x="${X(3.3)}" y="${Y(2.9)}" font-size="11" fill="#e8665a">povprečna</text><text x="${X(.4)}" y="${Y(2.9)}" font-size="11" fill="#7fcf86">trenutna (tangenta)</text>` }),
+        zv: "povprečna: v̄<sub>x</sub> = Δx/Δt (naklon daljice)<br>trenutna: v<sub>x</sub> = dx/dt (naklon tangente, Δt → 0)" },
+      { h: "Pospešek",
+        p: ["Pospešek pove, kako hitro se spreminja HITROST: a<sub>x</sub> = Δv<sub>x</sub>/Δt. To je naklon grafa v(t). Enota: (m/s)/s = m/s².",
+            "V diagramu gibanja: Δv = v₂ − v₁, torej v₁ + Δv = v₂. Puščico Δv narišeš tako, da »dopolni« v₁ do v₂. Če se telo upočasnjuje, Δv kaže NASPROTI gibanju.",
+            "<b>Prosti pad</b>: graf v(t) je premica (stalen pospešek g), graf x(t) je parabola."],
+        pic: plot({ xmax: 5, ymax: 5, xl: "t", yl: "v", series: [{ pts: [[0, .5], [4.5, 4.5]], col: "#5ec2d6" }, { pts: [[1.5, 1.83], [3.5, 1.83], [3.5, 3.6]], col: "#7fcf86", w: 1.8 }],
+          marks: (X, Y) => `<text x="${X(2.3)}" y="${Y(1.4)}" font-size="11" fill="#7fcf86">Δt</text><text x="${X(3.6)}" y="${Y(2.7)}" font-size="11" fill="#7fcf86">Δv</text><text x="${X(1)}" y="${Y(4.3)}" font-size="11" fill="var(--text)">a = Δv/Δt = naklon</text>` }),
+        zv: "a<sub>x</sub> = Δv<sub>x</sub>/Δt = naklon grafa v(t) &nbsp;&nbsp; [a] = m/s²<br>v₁ + Δv = v₂; zaviranje: Δv nasprotno v" },
+      { h: "Enakomerno pospešeno gibanje: tri enačbe",
+        p: ["Ko je a<sub>x</sub> stalen, je graf v(t) premica: <b>v<sub>x</sub> = v<sub>0x</sub> + a<sub>x</sub>t</b>.",
+            "Premik je ploščina pod to premico, torej trapez: pravokotnik v<sub>0x</sub> · t plus trikotnik ½ · t · a<sub>x</sub>t. Tako dobiš <b>x = x₀ + v<sub>0x</sub>t + ½a<sub>x</sub>t²</b>. (Profesor je pokazal še, da isto dobiš z integralom ∫(v<sub>0x</sub> + a<sub>x</sub>t) dt.)",
+            "Pri tem velja tudi: povprečna hitrost je (v₁ + v₂)/2, ampak SAMO pri enakomerno pospešenem gibanju.",
+            "Če ne poznaš časa, iz prve enačbe izraziš t in vstaviš v drugo: <b>v<sub>x</sub>² = v<sub>0x</sub>² + 2a<sub>x</sub>(x − x₀)</b>."],
+        pic: plot({ xmax: 5, ymax: 5, xl: "t", yl: "v", fills: [{ pts: [[0, 0], [0, 1.5], [4, 1.5], [4, 0]], col: "#5ec2d6" }, { pts: [[0, 1.5], [4, 4.3], [4, 1.5]], col: "#f2b84b" }], series: [{ pts: [[0, 1.5], [4.5, 4.65]], col: "#7fcf86" }],
+          marks: (X, Y) => `<text x="${X(2)}" y="${Y(.7)}" text-anchor="middle" font-size="11.5" fill="var(--text)">v₀t</text><text x="${X(2.9)}" y="${Y(2.4)}" text-anchor="middle" font-size="11.5" fill="var(--text)">½at²</text>` }),
+        zv: "v<sub>x</sub> = v<sub>0x</sub> + a<sub>x</sub>t<br>x = x₀ + v<sub>0x</sub>t + ½a<sub>x</sub>t²<br>v<sub>x</sub>² = v<sub>0x</sub>² + 2a<sub>x</sub>(x − x₀) &nbsp;(brez časa)<br>v̄ = (v₁ + v₂)/2 samo pri a = konst",
+        warn: "Predznaki so odvisni od izbrane osi. Če je os navzgor, je pri prostem padu a = −g." },
+      { h: "Poskus s predavanja: s kolikšno hitrostjo prileti žogica?",
+        p: ["Žogico so spustili z višine h = 6,357 m. Brez časa uporabiš tretjo enačbo: v² = 0 + 2gh.",
+            "v = √(2 · 9,81 m/s² · 6,357 m) ≈ 11,2 m/s. Izmerili so 11,2; 10,4; 10,44; 11,2 m/s. Rezultat meritve zapišeš kot sredino ± polovico razpona: <b>(10,8 ± 0,4) m/s</b>. Napoved 11,2 m/s je znotraj tega: razlaga je testu prestala."],
+        zv: "prosti pad z višine h: v = √(2gh) &nbsp;&nbsp; meritev: (sredina ± pol razpona)" },
+    ],
+    tasks: [
+      { q: "Avto ima ob t = 0 lego x₀ = 20 m in hitrost v = −5 m/s. Kje je čez 6 s? Kakšna je prepotovana pot?", a: "x = 20 − 5 · 6 = −10 m; pot = 30 m (gibanje ves čas v isto smer)." },
+      { q: "Telo gre od x = 2 m do x = 8 m in nazaj do x = 5 m. Premik? Pot?", a: "Premik = 5 − 2 = 3 m; pot = 6 + 3 = 9 m." },
+      { q: "Iz grafa: v(t) = 4 m/s od 0 do 3 s, nato −2 m/s od 3 do 5 s. Premik v 5 s?", a: "4 · 3 + (−2) · 2 = 8 m (ploščina pod osjo šteje negativno)." },
+      { q: "Avto pospeši iz mirovanja z a = 3 m/s². Hitrost in prevožena pot po 4 s?", a: "v = 12 m/s; x = ½ · 3 · 16 = 24 m.", steps: ["v = v₀ + at = 0 + 3 · 4", "x = v₀t + ½at² = 0 + 1,5 · 16"] },
+      { q: "Avto vozi 20 m/s in zavira s 4 m/s². Koliko m potrebuje do ustavitve?", a: "50 m", steps: ["0 = 20² + 2 · (−4) · s", "s = 400/8 = 50 m"] },
+      { q: "Kamen spustiš z višine 20 m (g = 9,8 m/s²). S kolikšno hitrostjo prileti na tla in koliko časa pada?", a: "v = √(2 · 9,8 · 20) ≈ 19,8 m/s; t = v/g ≈ 2,0 s." },
     ] },
 
   // ═══════════════════════════════════════════════
