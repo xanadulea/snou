@@ -88,11 +88,38 @@ function fdiag(up, down, label, v, dv) {
   const ar = (x1, y1, x2, y2, col, t, tx, ty) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="3" marker-end="url(#fa${col.slice(1)})"/><text x="${tx}" y="${ty}" font-size="11.5" fill="${col}">${t}</text>`;
   const mk = col => `<marker id="fa${col.slice(1)}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="${col}"/></marker>`;
   let h = `<defs>${mk("#5ec2d6")}${mk("#e8665a")}${mk("#f2b84b")}${mk("#7fcf86")}</defs><circle cx="${c}" cy="${y}" r="6" fill="var(--text)"/>`;
-  if (up) h += ar(c, y - 7, c, y - 7 - up * S, "#5ec2d6", "roka", c + 8, y - up * S / 2 - 7);
+  if (up) h += ar(c, y - 7, c, y - 7 - up * S, "#5ec2d6", "silomer", c + 8, y - up * S / 2 - 7);
   if (down) h += ar(c, y + 7, c, y + 7 + down * S, "#e8665a", "teža mg", c + 8, y + down * S / 2 + 10);
   if (v) h += ar(160, y + (v === "up" ? 25 : -25), 160, y + (v === "up" ? -25 : 25), "#f2b84b", "v", 168, y + 4);
   if (dv) h += ar(195, y + (dv === "up" ? 18 : -18), 195, y + (dv === "up" ? -18 : 18), "#7fcf86", "Δv", 203, y + 4);
   return `<svg viewBox="0 0 240 205" style="width:100%;max-width:220px">${h}<text x="120" y="200" text-anchor="middle" font-size="12" fill="var(--text)">${label}</text></svg>`;
+}
+
+
+function fgraph(kind, label) {
+  // napoved F_silomer(t): 0–1 miruje, 1–2 pospešuje, 2–4 stalna v, 4–5 zavira, 5–6 miruje
+  const X = t => 30 + t * 38, Y = f => 110 - f * 22, mg = 2.5;
+  const H1 = [[0, mg], [1, mg], [1, 3.6], [5, 3.6], [5, mg], [6, mg]];
+  const H2 = [[0, mg], [1, mg], [1, 3.6], [2, 3.6], [2, mg], [4, mg], [4, 1.4], [5, 1.4], [5, mg], [6, mg]];
+  const P = (kind === 1 ? H1 : H2).map(([t, f]) => `${X(t)},${Y(f)}`).join(" ");
+  const col = kind === 1 ? "#e8665a" : "#7fcf86";
+  const zone = (a, b, t) => `<text x="${(X(a) + X(b)) / 2}" y="128" text-anchor="middle" font-size="9.5" fill="var(--muted)">${t}</text>`;
+  return `<svg class="fg" viewBox="0 0 270 160" style="width:100%;max-width:330px">
+    <line x1="30" y1="112" x2="262" y2="112" stroke="var(--faint)"/><line x1="30" y1="112" x2="30" y2="8" stroke="var(--faint)"/>
+    <text x="34" y="14" font-size="11" fill="var(--muted)">F silomera</text><text x="248" y="108" font-size="11" fill="var(--muted)">t</text>
+    <line x1="30" y1="${Y(mg)}" x2="262" y2="${Y(mg)}" stroke="var(--muted)" stroke-dasharray="4 4"/><text x="8" y="${Y(mg) + 4}" font-size="11" fill="var(--muted)">mg</text>
+    ${[1, 2, 4, 5].map(t => `<line x1="${X(t)}" y1="112" x2="${X(t)}" y2="10" stroke="var(--line)"/>`).join("")}
+    <polyline points="${P}" fill="none" stroke="${col}" stroke-width="3"/>
+    ${zone(0, 1, "miruje")}${zone(1, 2, "pospeš.")}${zone(2, 4, "stalna v")}${zone(4, 5, "zavira")}${zone(5, 6, "miruje")}
+    <text x="146" y="152" text-anchor="middle" font-size="12.5" fill="${col}">${label}</text></svg>`;
+}
+function motiondiag() {
+  const ys = [0, 4, 14, 30, 46, 62, 76, 84, 86];
+  let h = "";
+  ys.forEach((y, i) => { const Y = 200 - y * 2; h += `<circle cx="60" cy="${Y}" r="5" fill="#e8665a"/>`; if (i < ys.length - 1) { const d = (ys[i + 1] - y) * 2; if (d > 4) h += `<line x1="80" y1="${Y}" x2="80" y2="${Y - d + 4}" stroke="#f2b84b" stroke-width="2.2" marker-end="url(#mdv)"/>`; } });
+  return `<svg class="md" viewBox="0 0 200 225" style="width:100%;max-width:220px"><defs><marker id="mdv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f2b84b"/></marker></defs>${h}
+    <text x="92" y="190" font-size="10.5" fill="var(--muted)">vse gostejše</text><text x="92" y="130" font-size="10.5" fill="var(--muted)">enake razdalje</text><text x="92" y="40" font-size="10.5" fill="var(--muted)">spet gostejše</text>
+    <text x="100" y="220" text-anchor="middle" font-size="11" fill="var(--text)">diagram gibanja (od spodaj gor)</text></svg>`;
 }
 
 const NOTES = [
@@ -446,41 +473,50 @@ const NOTES = [
     ] },
 
   // ═══════════════════════════════════════════════
-  { id: "z-fiz-sile", s: "fiz", t: "newton", title: "Sile: dvigneš žogo — kaj deluje nanjo?", vaje: "Vaje 20. 10. · Etkina, 3. poglavje",
-    intro: "Ključno vprašanje 3. poglavja: kako so sile povezane z gibanjem? Večina ljudi intuitivno misli »sila kaže tja, kamor se telo giblje«. Eksperiment z žogo pokaže, da to ni res, in iz tega dobiš 2. Newtonov zakon.",
+  { id: "z-fiz-sile", s: "fiz", t: "newton", title: "Aktivnost 2: kam kaže vsota sil? (žogica na silomeru)", vaje: "Vaje 20. 10. · Aktivnost 2 · Etkina, 3. poglavje",
+    intro: "Testiramo, kako so sile povezane z gibanjem. Večina ljudi intuitivno misli »sila kaže tja, kamor se telo giblje« (hipoteza 1). Poskus s silomerom pokaže, da to ni res, in iz tega dobiš 2. Newtonov zakon.",
     parts: [
-      { h: "Sistem in sile nanj",
-        p: ["Najprej izbereš <b>sistem</b>: tukaj je to žoga. Vse ostalo je okolica.",
-            "Sila vedno pride od nečesa: je interakcija med dvema telesoma. Na žogo delujeta dve telesi: <b>Zemlja</b> (teža, navzdol, mg) in <b>tvoja roka</b> (navzgor). Če ne znaš povedati, katero telo povzroča silo, te sile ni."],
-        zv: "sistem = telo, ki ga opazujemo &nbsp;&nbsp; sila = interakcija dveh teles<br>na žogo v roki: teža mg (Zemlja, dol) + sila roke (gor)" },
-      { h: "Diagram sil v treh fazah dvigovanja",
-        p: ["Diagram sil: telo nariši kot piko, sile kot puščice iz nje. Dolžina puščice = velikost sile. Zraven nariši še hitrost v in spremembo hitrosti Δv.",
-            "<b>1. Začneš dvigovati</b>: žoga se iz mirovanja pospeši navzgor. Roka mora potiskati močneje kot teža.",
-            "<b>2. Dvigaš enakomerno</b>: hitrost je stalna. Roka potiska natanko toliko kot teža.",
-            "<b>3. Ustavljaš se na vrhu</b>: žoga se še giblje gor, a se upočasnjuje. Roka potiska manj kot teža."],
-        pic: `<div class="vrow">${fdiag(5, 3.5, "1. pospešuje gor", "up", "up")}${fdiag(3.5, 3.5, "2. stalna hitrost", "up", "")}${fdiag(2, 3.5, "3. upočasnjuje (gre gor)", "up", "down")}</div>` },
-      { h: "Hipotezi in test",
-        p: ["<b>Hipoteza 1:</b> vsota sil kaže v smeri <b>hitrosti</b> (kamor se telo giblje).",
-            "<b>Hipoteza 2:</b> vsota sil kaže v smeri <b>spremembe hitrosti</b> Δv.",
-            "Test je faza 3: žoga se giblje NAVZGOR, upočasnjuje se, torej Δv kaže NAVZDOL. Teža je večja od sile roke, zato vsota sil kaže NAVZDOL. Hipoteza 1 napove gor, opazimo dol: <b>ovržena</b>. Hipoteza 2 napove dol: <b>preživi</b>.",
-            "Še bolj čisto: ko žogo vržeš navzgor in jo spustiš, nanjo deluje SAMO teža (dol), žoga pa leti gor. Gibanje gor brez sile gor."],
-        zv: "ΣF kaže v smeri Δv (spremembe hitrosti), NE v smeri v<br>vržena žoga gre gor, sila (teža) pa kaže dol",
-        warn: "Hipotezo ovrže en sam eksperiment, ki ji nasprotuje. Potrdi je pa noben ne more dokončno: preživi samo vse teste doslej." },
-      { h: "Iz tega sledita Newtonova zakona",
-        p: ["<b>2. Newtonov zakon:</b> a = ΣF / m. Pospešek (ki kaže v smeri Δv) kaže v smeri vsote sil. Večja masa, manjši pospešek pri isti sili.",
-            "<b>1. Newtonov zakon:</b> faza 2 (stalna hitrost) pokaže, da gibanje NE potrebuje neto sile. ΣF = 0 pomeni »hitrost se ne spreminja«, ne »telo miruje«.",
-            "<b>3. Newtonov zakon:</b> ko roka potiska žogo gor, žoga potiska roko dol z enako veliko silo. Ti dve sili delujeta na RAZLIČNI telesi, zato se ne izničita."],
-        zv: "2. zakon: ΣF = ma (a v smeri ΣF)<br>1. zakon: ΣF = 0 ⇔ v = konst (lahko ≠ 0)<br>3. zakon: F<sub>roka→žoga</sub> = −F<sub>žoga→roka</sub> (na različni telesi)",
-        ex: { q: "Žogo z maso 0,5 kg dvigaš s pospeškom 2 m/s² navzgor. S kolikšno silo jo potiskaš? (g = 9,8 m/s²)", steps: [
-          "Os navzgor. ΣF = F<sub>roka</sub> − mg = ma",
-          "F<sub>roka</sub> = m(g + a) = 0,5 kg · (9,8 + 2) m/s² = 5,9 N",
-          "Za primerjavo: pri stalni hitrosti (a = 0) je F<sub>roka</sub> = mg = 4,9 N"] } },
+      { h: "Hipotezi, ki ju testiramo",
+        p: ["<b>Hipoteza 1:</b> smer hitrosti telesa vedno kaže v smeri vsote sil na telo.",
+            "<b>Hipoteza 2:</b> smer spremembe hitrosti vedno kaže v smeri vsote sil na telo.",
+            "Ena trdi, da sila »vleče« telo v smeri gibanja. Druga, da sila <i>spreminja</i> gibanje: pospešuje, zavira ali obrača."],
+        zv: "H1: v ∥ ΣF &nbsp;&nbsp; H2: Δv ∥ ΣF" },
+      { h: "Poskus in sile na žogico",
+        p: ["Žogico obesimo na silomer. Silomer z žogico iz mirovanja dvignemo navpično navzgor in ga spet ustavimo. Silomer meri, s kolikšno silo vleče žogico, v odvisnosti od časa.",
+            "<b>Sistem</b> je žogica. Nanjo delujeta dve sili: <b>teža</b> mg (Zemlja, navzdol) in <b>sila silomera</b> F<sub>S na Ž</sub> (navzgor). Vsota sil je F<sub>S na Ž</sub> − mg (os y navzgor).",
+            "Zato: če je F<sub>S</sub> > mg, vsota sil kaže GOR; če je F<sub>S</sub> = mg, je vsota 0; če je F<sub>S</sub> < mg, kaže DOL."],
+        zv: "sistem: žogica &nbsp;&nbsp; sili: teža mg (dol), F<sub>S na Ž</sub> (gor)<br>ΣF<sub>y</sub> = F<sub>S na Ž</sub> − mg" },
+      { h: "Diagram gibanja",
+        p: ["Žogica gre od mirovanja gor in se spet ustavi. Zato so pike na diagramu gibanja najprej vse bolj narazen (pospešuje), potem enako narazen (stalna hitrost), na koncu spet vse bližje (zavira). Hitrost ves čas kaže GOR.",
+            "Sprememba hitrosti Δv pa kaže GOR samo na začetku, na sredini je 0, na koncu kaže DOL (hitrost se zmanjšuje)."],
+        pic: motiondiag(),
+        zv: "pospeševanje: Δv gor &nbsp;&nbsp; stalna v: Δv = 0 &nbsp;&nbsp; zaviranje: Δv dol<br>hitrost v ves čas gor" },
+      { h: "Diagram sil v treh fazah",
+        p: ["Dolžina puščice = velikost sile. Zraven sta hitrost v in sprememba hitrosti Δv. Primerjaj smer vsote sil z obema."],
+        pic: `<div class="vrow">${fdiag(5, 3.5, "pospešuje gor", "up", "up")}${fdiag(3.5, 3.5, "stalna hitrost", "up", "")}${fdiag(2, 3.5, "zavira (še gre gor)", "up", "down")}</div>`,
+        zv: "ΣF gor → F<sub>S</sub> > mg &nbsp; ΣF = 0 → F<sub>S</sub> = mg &nbsp; ΣF dol → F<sub>S</sub> < mg" },
+      { h: "Napoved grafov F(t) iz obeh hipotez",
+        p: ["<b>Po hipotezi 1:</b> dokler se žogica giblje, hitrost kaže gor, zato bi morala vsota sil kazati gor, torej F<sub>S</sub> > mg <i>ves čas gibanja</i>. Ko miruje, F<sub>S</sub> = mg.",
+            "<b>Po hipotezi 2:</b> vsota sil sledi Δv: pri pospeševanju F<sub>S</sub> > mg, pri stalni hitrosti F<sub>S</sub> = mg, pri zaviranju F<sub>S</sub> <b>< mg</b>.",
+            "Razlika je na koncu: H2 napove <b>padec pod mg</b>, medtem ko se žogica še giblje gor. H1 tega padca ne napove."],
+        pic: `<div class="vrow">${fgraph(1, "napoved hipoteze 1")}${fgraph(2, "napoved hipoteze 2")}</div>`,
+        zv: "H1: F > mg ves čas gibanja &nbsp;&nbsp; H2: F > mg, nato = mg, nato < mg<br>meritev pokaže padec pod mg ⇒ H1 ovržena, H2 preživi" },
+      { h: "Rezultat in kaj iz tega sledi",
+        p: ["Silomer na koncu res pokaže manj kot mg, čeprav se žogica še dviga. Hipoteza 1 je s tem <b>ovržena</b> (en nasproten poskus je dovolj). Hipoteza 2 je <b>preživela</b> test.",
+            "Iz H2 sledi <b>2. Newtonov zakon:</b> a = ΣF/m, pospešek (v smeri Δv) kaže v smeri vsote sil.",
+            "Iz srednje faze sledi <b>1. Newtonov zakon:</b> ΣF = 0 pomeni »hitrost se ne spreminja«, ne pa »telo miruje«."],
+        zv: "ΣF = ma (a v smeri Δv in ΣF)<br>ΣF = 0 ⇔ v = konst",
+        warn: "Hipotezo ovrže en sam poskus, ki ji nasprotuje. Potrdi je ne more noben: preživi samo vse teste doslej.",
+        ex: { q: "Žogica 0,5 kg, pospešek pri dvigu 2 m/s² navzgor. Kaj kaže silomer? (g = 9,8 m/s²)", steps: [
+          "F<sub>S</sub> − mg = ma",
+          "F<sub>S</sub> = m(g + a) = 0,5 · 11,8 = 5,9 N",
+          "pri stalni hitrosti 4,9 N; pri zaviranju z 2 m/s²: 0,5 · (9,8 − 2) = 3,9 N"] } },
     ],
     tasks: [
-      { q: "Žogo držiš pri miru. Katere sile delujejo nanjo in kakšna je vsota?", a: "Teža mg (dol) in sila roke (gor), enako veliki. ΣF = 0, ker je a = 0." },
-      { q: "Žogo vržeš navzgor. Kakšen je diagram sil, ko je že v zraku in leti gor?", a: "Samo teža mg navzdol (roka se je ne dotika več; zračni upor zanemarimo). Δv kaže dol, žoga se upočasnjuje." },
-      { q: "Ali obstaja »sila meta«, ki žogo nese navzgor, ko jo spustiš?", a: "Ne. Po spustu ni telesa, ki bi tako silo povzročalo. Žoga gre gor zaradi hitrosti, ki jo je imela ob spustu, ne zaradi sile." },
-      { q: "Dvigalo se giblje navzgor in se ustavlja. Ali je tvoja »teža« na tehtnici večja ali manjša kot mg?", a: "Manjša: Δv kaže dol, zato ΣF kaže dol, N < mg. Tehtnica kaže N.", steps: ["isto kot faza 3 pri žogi"] },
-      { q: "Žogo 0,5 kg spuščaš navzdol in jo zaviraš s pospeškom 2 m/s² (navzgor). S kolikšno silo jo držiš?", a: "5,9 N (enako kot pri pospeševanju navzgor: Δv kaže gor v obeh primerih).", steps: ["F − mg = m · 2 m/s²", "F = 0,5 · 11,8 = 5,9 N"] },
+      { q: "Žogica visi na silomeru pri miru. Kaj kaže silomer?", a: "mg (vsota sil 0, ker se hitrost ne spreminja)." },
+      { q: "Žogico na silomeru spuščaš navzdol in jo na koncu ustaviš. Nariši napoved F(t) po H2.", a: "Začetek (pospešuje dol, Δv dol): F < mg. Stalna hitrost: F = mg. Zaviranje (Δv gor): F > mg." },
+      { q: "Žogico vržeš navzgor. Katere sile delujejo nanjo, ko je že v zraku?", a: "Samo teža mg navzdol. Hitrost gor, Δv dol: to je še en poskus, ki ovrže H1." },
+      { q: "Dvigalo se giblje navzgor in se ustavlja. Je tvoja »teža« na tehtnici večja ali manjša od mg?", a: "Manjša: enako kot konec poskusa s silomerom (Δv dol ⇒ N < mg)." },
+      { q: "Pri dvigu silomer pokaže največ 5,9 N in najmanj 3,9 N, v mirovanju 4,9 N. Kolikšna sta pospešek in pojemek? (g = 9,8 m/s²)", a: "m = 0,5 kg; a = (5,9 − 4,9)/0,5 = 2 m/s² gor; pri zaviranju (4,9 − 3,9)/0,5 = 2 m/s² dol.", steps: ["m = 4,9 N / 9,8 m/s² = 0,5 kg", "a = (F − mg)/m"] },
     ] },
 ];
